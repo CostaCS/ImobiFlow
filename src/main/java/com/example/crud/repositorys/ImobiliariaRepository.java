@@ -1,9 +1,9 @@
 package com.example.crud.repositorys;
-//DAO
-import com.example.crud.domain.entitys.Usuario;
+
+import com.example.crud.domain.entitys.Imobiliaria;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
+public interface ImobiliariaRepository extends JpaRepository<Imobiliaria, UUID> {
 }
