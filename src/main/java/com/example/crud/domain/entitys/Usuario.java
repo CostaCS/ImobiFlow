@@ -30,7 +30,6 @@ public class Usuario {
 
     private LocalDate data_cadastro;
 
-    private Boolean active;
 
     public Usuario(RequestUsuario requestUsuario) {
         this.nome = requestUsuario.nome();
@@ -38,6 +37,5 @@ public class Usuario {
         this.senha = requestUsuario.senha();
         this.telefone = requestUsuario.telefone();
         this.data_cadastro = requestUsuario.data_cadastro();
-        this.active = true;
    }
 }
