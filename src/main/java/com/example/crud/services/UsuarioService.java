@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +19,16 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
     public List<Usuario> getAllUsuarios() {
         return repository.findAll();
     }
 
     public void registerUsuario(RequestUsuario data) {
         Usuario newUsuario = new Usuario(data);
+        newUsuario.setSenha(encoder.encode(data.senha()));
         repository.save(newUsuario);
     }
 
@@ -34,7 +39,7 @@ public class UsuarioService {
             Usuario usuario = optionalUsuario.get();
             usuario.setNome(data.nome());
             usuario.setEmail(data.email());
-            usuario.setSenha(data.senha());
+            usuario.setSenha(encoder.encode(data.senha()));
             usuario.setTelefone(data.telefone());
             usuario.setData_cadastro(data.data_cadastro());
             return usuario;
