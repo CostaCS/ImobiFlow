@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -18,6 +19,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/negociacao/**", "/imovel/**", "/imobiliaria/**", "/usuario/**", "/cliente/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/negociacao").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
