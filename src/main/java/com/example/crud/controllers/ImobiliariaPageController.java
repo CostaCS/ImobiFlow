@@ -23,6 +23,7 @@ public class ImobiliariaPageController {
     public String listarImobiliarias(Model model) {
         model.addAttribute("imobiliarias", imobiliariaService.getAllImobiliarias());
         model.addAttribute("imobiliaria", new Imobiliaria());
+        model.addAttribute("modoEdicao", false);
         return "imobiliarias";
     }
 
@@ -37,6 +38,8 @@ public class ImobiliariaPageController {
     public String editar(@PathVariable UUID id, Model model) {
         Imobiliaria im = imobiliariaService.getById(id);
         model.addAttribute("imobiliaria", im);
+        model.addAttribute("abrirModal", true);
+        model.addAttribute("modoEdicao", true);
         model.addAttribute("imobiliarias", imobiliariaService.getAllImobiliarias());
         return "imobiliarias";
     }
@@ -46,5 +49,14 @@ public class ImobiliariaPageController {
         imobiliariaService.deleteImobiliaria(id);
         return "redirect:/imobiliarias";
     }
+    @GetMapping("/novo")
+    public String novaImobiliaria(Model model) {
+        model.addAttribute("imobiliaria", new Imobiliaria());
+        model.addAttribute("imobiliarias", imobiliariaService.getAllImobiliarias());
+        model.addAttribute("modoEdicao", false);
+        model.addAttribute("abrirModal", true);
+        return "imobiliarias";
+    }
+
 }
 
