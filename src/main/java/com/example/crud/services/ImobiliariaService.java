@@ -52,5 +52,13 @@ public class ImobiliariaService {
             throw new EntityNotFoundException();
         }
     }
+
+    public Imobiliaria getById(UUID id) {
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Imobiliária não encontrada"));
+    }
+
+    public void salvarOuAtualizar(Imobiliaria i) {
+        repository.save(i);
+    }
 }
 
