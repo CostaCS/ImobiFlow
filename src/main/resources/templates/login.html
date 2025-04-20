@@ -40,9 +40,13 @@
                             <button type="submit" class="btn btn-primary">Entrar</button>
                         </div>
                     </form>
-
-                    <div class="mt-3 text-center">
-                        <small class="text-muted">Sistema de Gerenciamento de Reservas</small>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="mt-3 text-center p-2 me-6">
+                            <a th:href="@{/usuario/cadastro}"><small class="text-muted">Primeiro acesso</small></a>
+                        </div>
+                        <div class="mt-3 text-center">
+                           <a th:href="@{/recuperarSenha}"><small class="text-muted">Esqueci minha senha</small></a>
+                        </div>
                     </div>
 
                 </div>

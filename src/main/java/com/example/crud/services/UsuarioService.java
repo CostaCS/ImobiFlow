@@ -1,5 +1,6 @@
 package com.example.crud.services;
 
+import com.example.crud.domain.entitys.Imobiliaria;
 import com.example.crud.domain.entitys.Usuario;
 import com.example.crud.repositorys.UsuarioRepository;
 import com.example.crud.requests.RequestUsuario;
@@ -56,6 +57,10 @@ public class UsuarioService {
         } else {
             throw new EntityNotFoundException();
         }
+    }
+
+    public void salvar(Usuario i) {
+        repository.save(i);
     }
 }
 
