@@ -35,6 +35,7 @@ public class UsuarioController {
             var usuarioAtualizado = usuarioService.updateUsuario(data);
             return ResponseEntity.ok(usuarioAtualizado);
         }
+
         @DeleteMapping("/{id}")
         @Transactional
         public ResponseEntity deleteProduct(@PathVariable UUID id){

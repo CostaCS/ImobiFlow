@@ -11,4 +11,14 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/cadastro")
+    public String MostrarCadastro(){
+        return "cadastro";
+    }
+
+    @GetMapping("/recuperarSenha")
+    public String MostrarRecuperarSenha(){
+        return "recuperarSenha";
+    }
+
 }
