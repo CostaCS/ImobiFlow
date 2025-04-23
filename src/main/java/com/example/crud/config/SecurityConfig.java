@@ -1,5 +1,6 @@
 package com.example.crud.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,9 @@ import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private CustomAuthSuccessHandler authSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -37,8 +41,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard",true)
-                        .permitAll()
+                        .successHandler(authSuccessHandler)
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")

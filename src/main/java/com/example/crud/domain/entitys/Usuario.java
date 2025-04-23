@@ -33,6 +33,8 @@ public class Usuario {
     @Column(name = "token_recuperacao_senha")
     private String tokenRecuperacaoSenha;
 
+    private boolean admin = false;
+
 
     public Usuario(RequestUsuario requestUsuario) {
         this.nome = requestUsuario.nome();
@@ -40,5 +42,6 @@ public class Usuario {
         this.senha = requestUsuario.senha();
         this.telefone = requestUsuario.telefone();
         this.data_cadastro = requestUsuario.data_cadastro();
+        this.admin = false;
    }
 }
