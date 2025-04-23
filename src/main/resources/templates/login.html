@@ -25,6 +25,15 @@
                         </div>
                     </div>
 
+                    <div th:if="${mensagem}" class="alert alert-success text-center" role="alert">
+                        <p th:text="${mensagem}"></p>
+                    </div>
+
+                    <div th:if="${erro}" class="alert alert-danger text-center" role="alert">
+                        <p th:text="${erro}"></p>
+                    </div>
+
+
                     <h2 class="card-title text-center mb-4">Login</h2>
 
                     <form th:action="@{/login}" method="post">
@@ -45,7 +54,7 @@
                             <a th:href="@{/usuario/cadastro}"><small class="text-muted">Primeiro acesso</small></a>
                         </div>
                         <div class="mt-3 text-center">
-                           <a th:href="@{/recuperarSenha}"><small class="text-muted">Esqueci minha senha</small></a>
+                           <a th:href="@{/usuario/recuperar-senha}"><small class="text-muted">Esqueci minha senha</small></a>
                         </div>
                     </div>
 
