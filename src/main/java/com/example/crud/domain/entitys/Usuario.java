@@ -30,6 +30,9 @@ public class Usuario {
 
     private LocalDate data_cadastro;
 
+    @Column(name = "token_recuperacao_senha")
+    private String tokenRecuperacaoSenha;
+
 
     public Usuario(RequestUsuario requestUsuario) {
         this.nome = requestUsuario.nome();

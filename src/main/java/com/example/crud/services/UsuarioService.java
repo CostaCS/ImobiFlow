@@ -62,5 +62,15 @@ public class UsuarioService {
     public void salvar(Usuario i) {
         repository.save(i);
     }
+
+    public Usuario buscarPorEmail(String email){
+        return repository.findByEmail(email).orElse(null);
+    }
+
+    //TEMPORARIO
+    public Usuario buscarUsuarioPorToken(String token){
+        return repository.findByTokenRecuperacaoSenha(token).orElse(null);
+    }
+
 }
 
