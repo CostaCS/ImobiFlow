@@ -67,6 +67,12 @@ public class UsuarioService {
         return repository.findByEmail(email).orElse(null);
     }
 
+    public Usuario findById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }
+
+
     //TEMPORARIO
     public Usuario buscarUsuarioPorToken(String token){
         return repository.findByTokenRecuperacaoSenha(token).orElse(null);
