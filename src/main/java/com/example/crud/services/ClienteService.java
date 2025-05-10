@@ -51,5 +51,24 @@ public class ClienteService {
             throw new EntityNotFoundException();
         }
     }
+
+    //Service para HTML
+
+    public List<Cliente> listarTodos() {
+        return repository.findAll();
+    }
+
+    public void salvar(Cliente cliente) {
+        repository.save(cliente);
+    }
+
+    public void deletar(UUID id) {
+        repository.deleteById(id);
+    }
+
+    public Cliente buscarPorId(UUID id) {
+        return repository.findById(id).orElse(null);
+    }
+
 }
 

@@ -11,11 +11,17 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
             <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item" th:if="${session.usuarioLogado != null and session.usuarioLogado.admin}">
+                    <a class="nav-link text-white" th:href="@{/usuario/pagina}">Gerenciar Usuários</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" th:href="@{/dashboard}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" th:href="@{/imobiliarias}">Imobiliária</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/clientes}">Clientes</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" th:href="@{/logout}">Sair</a>
