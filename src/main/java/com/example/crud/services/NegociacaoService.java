@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -96,5 +97,33 @@ public class NegociacaoService {
     public Optional<Negociacao> buscarPorId(UUID id) {
         return repository.findById(id);
     }
+
+    //HTML
+    public void salvarViaHTML(Negociacao negociacao) {
+
+        UUID idCliente = negociacao.getCliente().getId();
+        UUID idImovel = negociacao.getImovel().getId();
+        UUID idImobiliaria = negociacao.getImobiliaria().getId();
+
+        Cliente cliente = clienteRepository.findById(idCliente)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+
+        Imovel imovel = imovelRepository.findById(idImovel)
+                .orElseThrow(() -> new EntityNotFoundException("Imóvel não encontrado"));
+
+        Imobiliaria imobiliaria = imobiliariaRepository.findById(idImobiliaria)
+                .orElseThrow(() -> new EntityNotFoundException("Imobiliária não encontrada"));
+
+        negociacao.setCliente(cliente);
+        negociacao.setImovel(imovel);
+        negociacao.setImobiliaria(imobiliaria);
+
+        if (negociacao.getDataNegociacao() == null) {
+            negociacao.setDataNegociacao(LocalDate.now());
+        }
+
+        repository.save(negociacao);
+    }
+
 }
 
