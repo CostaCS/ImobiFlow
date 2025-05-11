@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,4 +74,23 @@ public class ImovelService {
             throw new EntityNotFoundException("Imóvel não encontrado");
         }
     }
+
+    //html
+
+    public void salvarViaHTML(Imovel imovel) {
+
+        imovel.setDataCadastro(LocalDate.now());
+
+
+        UUID idImobiliaria = imovel.getImobiliaria().getId();
+        Imobiliaria imobiliaria = imobiliariaRepository.findById(idImobiliaria)
+                .orElseThrow(() -> new EntityNotFoundException("Imobiliária não encontrada"));
+
+        imovel.setImobiliaria(imobiliaria);
+
+        imovelRepository.save(imovel);
+    }
+
+
+
 }
