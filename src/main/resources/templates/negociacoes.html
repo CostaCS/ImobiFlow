@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Negociações</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<th:block th:replace="fragments/layout :: header"/>
+
+<div class="container mt-5">
+  <h3>Negociações Realizadas</h3>
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead class="table-light">
+    <tr>
+      <th>Cliente</th>
+      <th>Contato</th>
+      <th>Imóvel</th>
+      <th>Valor Proposto</th>
+      <th>Status</th>
+      <th>Data</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="n : ${negociacoes}">
+      <td th:text="${n.cliente.nome}">Cliente</td>
+      <td th:text="${n.contatoCliente}">Contato</td>
+      <td th:text="${n.imovel.titulo}">Imóvel</td>
+      <td th:text="|R$ ${n.valorProposto}|">Valor</td>
+      <td th:text="${n.status}">Status</td>
+      <td th:text="${n.dataNegociacao}">Data</td>
+      <td>
+        <button class="btn btn-warning btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#negociacaoModal"
+                th:attr="onclick=|editarNegociacao('${n.id}', '${n.contatoCliente}', '${n.valorProposto}', '${n.status}', '${n.cliente.id}', '${n.imovel.id}', '${n.imobiliaria.id}')|">
+          Editar
+        </button>
+        <a th:href="@{/negociacao/deletar/{id}(id=${n.id})}" class="btn btn-danger btn-sm">Excluir</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#negociacaoModal" onclick="abrirModalNovo()">Cadastrar Negociação</button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="negociacaoModal" tabindex="-1" aria-labelledby="negociacaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form th:action="@{/negociacao/salvar}" method="post" th:object="${negociacao}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="negociacaoModalLabel">Cadastro de Negociação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" th:field="*{id}" id="negociacaoId"/>
+
+          <div class="mb-3">
+            <label for="clienteSelect">Cliente</label>
+            <select th:field="*{cliente.id}" id="clienteSelect" class="form-select">
+              <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome}"></option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="imovelSelect">Imóvel</label>
+            <select th:field="*{imovel.id}" id="imovelSelect" class="form-select">
+              <option th:each="i : ${imoveis}" th:value="${i.id}" th:text="${i.titulo}"></option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="imobiliariaSelect">Imobiliária</label>
+            <select th:field="*{imobiliaria.id}" id="imobiliariaSelect" class="form-select">
+              <option th:each="i : ${imobiliarias}" th:value="${i.id}" th:text="${i.nome}"></option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="contatoCliente">Contato do Cliente</label>
+            <input type="text" th:field="*{contatoCliente}" id="contatoCliente" class="form-control"/>
+          </div>
+
+          <div class="mb-3">
+            <label for="valorProposto">Valor Proposto (R$)</label>
+            <input type="number" step="0.01" th:field="*{valorProposto}" id="valorProposto" class="form-control"/>
+          </div>
+
+          <div class="mb-3">
+            <label for="statusSelect">Status</label>
+            <select th:field="*{status}" id="statusSelect" class="form-select">
+              <option value="Em análise">Em análise</option>
+              <option value="Aprovado">Aprovado</option>
+              <option value="Recusado">Recusado</option>
+              <option value="Concluído">Concluído</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function editarNegociacao(id, contato, valor, status, clienteId, imovelId, imobiliariaId) {
+      document.getElementById('negociacaoId').value = id;
+      document.getElementById('contatoCliente').value = contato;
+      document.getElementById('valorProposto').value = valor;
+      document.getElementById('statusSelect').value = status;
+      document.getElementById('clienteSelect').value = clienteId;
+      document.getElementById('imovelSelect').value = imovelId;
+      document.getElementById('imobiliariaSelect').value = imobiliariaId;
+  }
+
+  function abrirModalNovo() {
+      editarNegociacao('', '', '', '', '', '', '');
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
