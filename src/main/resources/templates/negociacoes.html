@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Negociações</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Cabeçalho reutilizável -->
+<th:block th:replace="fragments/layout :: header"/>
+
+<!-- Alerta de sucesso -->
+<div class="container mt-3">
+  <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${mensagem}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+  </div>
+</div>
+
+<!-- Tabela de negociações -->
+<div class="container mt-5">
+  <h3>Negociações Realizadas</h3>
+
+  <table class="table table-bordered table-hover mt-3">
+    <thead class="table-light">
+    <tr>
+      <th>Cliente</th>
+      <th>Contato</th>
+      <th>Imóvel</th>
+      <th>Valor Proposto</th>
+      <th>Status</th>
+      <th>Data</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="n : ${negociacoes}">
+      <td th:text="${n.cliente.nome}"></td>
+      <td th:text="${n.contatoCliente}"></td>
+      <td th:text="${n.imovel.titulo}"></td>
+      <td th:text="|R$ ${n.valorProposto}|"></td>
+      <td th:text="${n.status}"></td>
+      <td th:text="${n.dataNegociacao}"></td>
+      <td>
+        <!-- Botão para edição -->
+        <button class="btn btn-warning btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#negociacaoModal"
+                th:attr="onclick=|editarNegociacao('${n.id}', '${n.contatoCliente}', '${n.valorProposto}', '${n.status}', '${n.cliente.id}', '${n.imovel.id}', '${n.imobiliaria.id}')|">
+          Editar
+        </button>
+        <!-- Botão para exclusão com modal -->
+        <button class="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalConfirmarExclusao"
+                th:attr="data-id=${n.id}, data-nome=${n.cliente.nome}">
+          Excluir
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- Botão para nova negociação -->
+  <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#negociacaoModal" onclick="abrirModalNovo()">Cadastrar Negociação</button>
+</div>
+
+<!-- Modal de cadastro/edição -->
+<div class="modal fade" id="negociacaoModal" tabindex="-1" aria-labelledby="negociacaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form th:action="@{/negociacao/salvar}" method="post" th:object="${negociacao}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="negociacaoModalLabel">Cadastro de Negociação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Campos do formulário -->
+          <input type="hidden" th:field="*{id}" id="negociacaoId"/>
+
+          <!-- Cliente -->
+          <div class="mb-3">
+            <label for="clienteSelect">Cliente</label>
+            <select th:field="*{cliente.id}" id="clienteSelect" class="form-select">
+              <option th:each="c : ${clientes}" th:value="${c.id}" th:text="${c.nome}"></option>
+            </select>
+          </div>
+
+          <!-- Imóvel -->
+          <div class="mb-3">
+            <label for="imovelSelect">Imóvel</label>
+            <select th:field="*{imovel.id}" id="imovelSelect" class="form-select">
+              <option th:each="i : ${imoveis}" th:value="${i.id}" th:text="${i.titulo}"></option>
+            </select>
+          </div>
+
+          <!-- Imobiliária -->
+          <div class="mb-3">
+            <label for="imobiliariaSelect">Imobiliária</label>
+            <select th:field="*{imobiliaria.id}" id="imobiliariaSelect" class="form-select">
+              <option th:each="i : ${imobiliarias}" th:value="${i.id}" th:text="${i.nome}"></option>
+            </select>
+          </div>
+
+          <!-- Contato -->
+          <div class="mb-3">
+            <label for="contatoCliente">Contato do Cliente</label>
+            <input type="text" th:field="*{contatoCliente}" id="contatoCliente" class="form-control"/>
+          </div>
+
+          <!-- Valor -->
+          <div class="mb-3">
+            <label for="valorProposto">Valor Proposto (R$)</label>
+            <input type="number" step="0.01" th:field="*{valorProposto}" id="valorProposto" class="form-control"/>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-3">
+            <label for="statusSelect">Status</label>
+            <select th:field="*{status}" id="statusSelect" class="form-select">
+              <option value="Em andamento">Em andamento</option>
+              <option value="Proposta enviada">Proposta enviada</option>
+              <option value="Em Análise pelo Cliente">Em Análise pelo Cliente</option>
+              <option value="Contra Proposta Recebida">Contra Proposta Recebida</option>
+              <option value="Documentação em Andamento">Documentação em Andamento</option>
+              <option value="Negociação Concluída">Negociação Concluída</option>
+              <option value="Negociação Recusada">Negociação Recusada</option>
+              <option value="Cancelada pelo Cliente">Cancelada pelo Cliente</option>
+              <option value="Cancelada pela Imobiliária">Cancelada pela Imobiliária</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="exclusaoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exclusaoLabel">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir a negociação do cliente <strong id="nomeClienteExcluir">...</strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <a id="btnConfirmarExclusao" class="btn btn-danger" href="#">Excluir</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+  // Carrega dados no modal de exclusão
+  const modalExclusao = document.getElementById('modalConfirmarExclusao');
+  modalExclusao.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute('data-id');
+    const nome = button.getAttribute('data-nome');
+
+    document.getElementById('nomeClienteExcluir').textContent = nome;
+    document.getElementById('btnConfirmarExclusao').href = '/negociacao/deletar/' + id;
+  });
+
+  // Preenche o modal de edição com os dados da negociação
+  function editarNegociacao(id, contato, valor, status, clienteId, imovelId, imobiliariaId) {
+    document.getElementById('negociacaoId').value = id;
+    document.getElementById('contatoCliente').value = contato;
+    document.getElementById('valorProposto').value = valor;
+    document.getElementById('statusSelect').value = status;
+    document.getElementById('clienteSelect').value = clienteId;
+    document.getElementById('imovelSelect').value = imovelId;
+    document.getElementById('imobiliariaSelect').value = imobiliariaId;
+  }
+
+  // Limpa os campos ao abrir novo
+  function abrirModalNovo() {
+    editarNegociacao('', '', '', '', '', '', '');
+  }
+
+  // Esconde o alerta de sucesso após 3s
+  setTimeout(() => {
+    document.querySelector('.alert')?.classList.replace('show', 'hide');
+  }, 3000);
+</script>
+
+<!-- Abre modal automaticamente se necessário -->
+<script th:if="${abrirModal}" th:inline="javascript">
+  const modal = new bootstrap.Modal(document.getElementById('negociacaoModal'));
+  modal.show();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="fragments/footer :: footer"/>
+</body>
+</html>
