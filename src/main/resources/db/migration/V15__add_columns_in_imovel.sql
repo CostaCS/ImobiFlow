@@ -1,0 +1,4 @@
+ALTER TABLE imovel ADD COLUMN quartos INT;
+ALTER TABLE imovel ADD COLUMN banheiros INT;
+ALTER TABLE imovel ADD COLUMN vagas INT;
+ALTER TABLE imovel ADD COLUMN preco_condominio DOUBLE PRECISION;

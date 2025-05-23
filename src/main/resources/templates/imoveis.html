@@ -5,6 +5,7 @@
   <title>Gestão de Imóveis</title>
   <link rel="stylesheet" th:href="@{/css/styles.css}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 
@@ -19,19 +20,67 @@
   </div>
 </div>
 
+<!-- Cards -->
+<div class="container mt-4">
+  <div class="row text-center">
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <i class="bi bi-house-door fs-3 text-primary"></i>
+          <h6 class="mt-2">Disponíveis</h6>
+          <h4 class="fw-bold text-dark" th:text="${totalDisponiveis}">0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <i class="bi bi-house fs-3 text-warning"></i>
+          <h6 class="mt-2">Em Negociação</h6>
+          <h4 class="fw-bold text-dark" th:text="${totalNegociacao}">0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <i class="bi bi-house-check fs-3 text-success"></i>
+          <h6 class="mt-2">Vendidos</h6>
+          <h4 class="fw-bold text-dark" th:text="${totalVendidos}">0</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Tabela de imóveis -->
 <div class="container mt-5">
-  <h3>Imóveis Cadastrados</h3>
-  <table class="table table-bordered table-hover mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Lista de Imóveis</h3>
+    <div class="d-flex gap-2">
+      <form method="get" th:action="@{/imovel/pagina}" class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Buscar imóvel..." aria-label="Buscar" name="busca" th:value="${busca}">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+      <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#imovelModal" onclick="abrirModalNovo()">
+        <i class="bi bi-plus-circle me-1"></i> Adicionar Novo Imóvel
+      </button>
+    </div>
+  </div>
+
+  <table class="table table-hover align-middle mt-4 shadow-sm rounded">
     <thead class="table-light">
     <tr>
       <th>Título</th>
       <th>Tipo</th>
       <th>Metragem</th>
       <th>Preço</th>
-      <th>Status</th>
-      <th>Data</th>
+      <th>Quartos</th>
+      <th>Banheiros</th>
+      <th>Vagas</th>
+      <th>Condomínio</th>
       <th>Imobiliária</th>
+      <th>Status</th>
       <th>Ações</th>
     </tr>
     </thead>
@@ -39,16 +88,28 @@
     <tr th:each="imovel : ${imoveis}">
       <td th:text="${imovel.titulo}"></td>
       <td th:text="${imovel.tipoImovel}"></td>
-      <td th:text="${imovel.metragem} + ' m²'"></td>
-      <td th:text="|R$ ${imovel.preco}|"></td>
-      <td th:text="${imovel.status}"></td>
-      <td th:text="${imovel.dataCadastro}"></td>
-      <td th:text="${imovel.imobiliaria.nome}"></td>
+      <td th:text="${imovel.metragem} + 'm²'"></td>
+      <td th:text="|R$ ${#numbers.formatDecimal(imovel.preco, 0, 'COMMA', 2, 'POINT')}|"></td>
+      <td th:text="${imovel.quartos}"></td>
+      <td th:text="${imovel.banheiros}"></td>
+      <td th:text="${imovel.vagas}"></td>
+      <td th:text="|R$ ${#numbers.formatDecimal(imovel.precoCondominio, 0, 'COMMA', 2, 'POINT')}|"></td>
+      <td>
+        <i class="bi bi-buildings"></i> <span th:text="${imovel.imobiliaria.nome}"></span>
+      </td>
+      <td>
+        <span class="badge"
+              th:classappend="${imovel.status} == 'Disponível' ? 'bg-primary' :
+                              (imovel.status == 'Reservado' ? 'bg-warning text-dark' :
+                              (imovel.status == 'Vendido' ? 'bg-success' : 'bg-secondary'))"
+              th:text="${imovel.status}">
+        </span>
+      </td>
       <td>
         <button class="btn btn-warning btn-sm"
                 data-bs-toggle="modal"
                 data-bs-target="#imovelModal"
-                th:attr="onclick=|editarImovel('${imovel.id}', '${imovel.titulo}', '${imovel.descricao}', '${imovel.endereco}', '${imovel.tipoImovel}', '${imovel.metragem}', '${imovel.preco}', '${imovel.status}', '${imovel.dataCadastro}', '${imovel.imobiliaria.id}')|">
+                th:attr="onclick=|editarImovel('${imovel.id}', '${imovel.titulo}', '${imovel.descricao}', '${imovel.endereco}', '${imovel.tipoImovel}', '${imovel.metragem}', '${imovel.preco}', '${imovel.status}', '${imovel.dataCadastro}', '${imovel.imobiliaria.id}', '${imovel.quartos}', '${imovel.banheiros}', '${imovel.vagas}', '${imovel.precoCondominio}')|">
           Editar
         </button>
         <button class="btn btn-danger btn-sm"
@@ -61,8 +122,6 @@
     </tr>
     </tbody>
   </table>
-
-  <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#imovelModal" onclick="abrirModalNovo()">Cadastrar Imóvel</button>
 </div>
 
 <!-- Modal de cadastro/edição -->
@@ -94,6 +153,16 @@
             </div>
           </div>
 
+          <div class="mb-3">
+            <label for="imovelDescricao">Descrição</label>
+            <textarea th:field="*{descricao}" id="imovelDescricao" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="imovelEndereco">Endereço</label>
+            <input type="text" th:field="*{endereco}" id="imovelEndereco" class="form-control"/>
+          </div>
+
           <div class="row mb-3">
             <div class="col">
               <label for="imovelMetragem">Metragem (m²)</label>
@@ -114,24 +183,42 @@
             </div>
           </div>
 
-          <div class="mb-3">
-            <label for="imovelDescricao">Descrição</label>
-            <textarea th:field="*{descricao}" id="imovelDescricao" class="form-control" rows="3"></textarea>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="imovelQuartos">Quartos</label>
+              <input type="number" th:field="*{quartos}" id="imovelQuartos" class="form-control"/>
+            </div>
+            <div class="col">
+              <label for="imovelBanheiros">Banheiros</label>
+              <input type="number" th:field="*{banheiros}" id="imovelBanheiros" class="form-control"/>
+            </div>
+            <div class="col">
+              <label for="imovelVagas">Vagas</label>
+              <input type="number" th:field="*{vagas}" id="imovelVagas" class="form-control"/>
+            </div>
           </div>
 
-          <div class="mb-3">
-            <label for="imovelEndereco">Endereço</label>
-            <input type="text" th:field="*{endereco}" id="imovelEndereco" class="form-control"/>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="imovelPrecoCondominio">Condomínio (R$)</label>
+              <input type="number" step="0.01" th:field="*{precoCondominio}" id="imovelPrecoCondominio" class="form-control"/>
+            </div>
+            <div class="col">
+              <label for="imovelDataCadastro">Data de Cadastro</label>
+              <input type="date" th:field="*{dataCadastro}" id="imovelDataCadastro" class="form-control"/>
+            </div>
           </div>
 
           <div class="row mb-3">
             <div class="col">
               <label for="imovelImobiliaria">Imobiliária</label>
               <select th:field="*{imobiliaria.id}" id="imovelImobiliaria" class="form-select">
+                <option value="">Selecione</option>
                 <option th:each="imob : ${imobiliarias}" th:value="${imob.id}" th:text="${imob.nome}"></option>
               </select>
             </div>
           </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -141,6 +228,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- Modal de confirmação de exclusão -->
 <div class="modal fade" id="modalConfirmarExclusao" tabindex="-1" aria-labelledby="exclusaoLabel" aria-hidden="true">
@@ -163,20 +251,25 @@
 
 <!-- Scripts JS -->
 <script>
-  function editarImovel(id, titulo, descricao, endereco, tipo, metragem, preco, status, data, imobiliariaId) {
-    document.getElementById('imovelId').value = id;
-    document.getElementById('imovelTitulo').value = titulo;
-    document.getElementById('imovelDescricao').value = descricao;
-    document.getElementById('imovelEndereco').value = endereco;
-    document.getElementById('imovelTipo').value = tipo;
-    document.getElementById('imovelMetragem').value = metragem;
-    document.getElementById('imovelPreco').value = preco;
-    document.getElementById('imovelStatus').value = status;
-    document.getElementById('imovelImobiliaria').value = imobiliariaId;
-  }
+  function editarImovel(id, titulo, descricao, endereco, tipo, metragem, preco, status, data, imobiliariaId, quartos, banheiros, vagas, precoCondominio) {
+  document.getElementById('imovelId').value = id;
+  document.getElementById('imovelTitulo').value = titulo;
+  document.getElementById('imovelDescricao').value = descricao;
+  document.getElementById('imovelEndereco').value = endereco;
+  document.getElementById('imovelTipo').value = tipo;
+  document.getElementById('imovelMetragem').value = metragem;
+  document.getElementById('imovelPreco').value = preco;
+  document.getElementById('imovelStatus').value = status;
+  document.getElementById('imovelImobiliaria').value = imobiliariaId;
+  document.getElementById('imovelQuartos').value = quartos;
+  document.getElementById('imovelBanheiros').value = banheiros;
+  document.getElementById('imovelVagas').value = vagas;
+  document.getElementById('imovelPrecoCondominio').value = precoCondominio;
+}
+
 
   function abrirModalNovo() {
-    editarImovel('', '', '', '', '', '', '', '', '', '');
+    editarImovel('', '', '', '', '', '', '', '', '', '', '', '', '', '');
   }
 
   // Modal de exclusão

@@ -34,6 +34,19 @@ public class Imovel {
 
     private String status;
 
+    @Column(nullable = true)
+    private Integer quartos;
+
+    @Column(nullable = true)
+    private Integer banheiros;
+
+    @Column(nullable = true)
+    private Integer vagas;
+
+    @Column(name = "preco_condominio", nullable = true)
+    private Double precoCondominio;
+
+
     @ManyToOne
     @JoinColumn(name = "idImobiliaria", nullable = false)
     private Imobiliaria imobiliaria;

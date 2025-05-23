@@ -37,5 +37,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, UUID> {
 
     long countByUsuario(Usuario usuario);
 
+    long countByStatusAndUsuario(String status, Usuario usuario);
+
 }
 

@@ -70,19 +70,28 @@ public class ImovelController {
 
         System.out.println("Usuário logado: " + usuarioLogado);
 
-        Pageable pageable = PageRequest.of(page, 10); // 10 é o tamanho da página
+        Pageable pageable = PageRequest.of(page, 10);
         model.addAttribute("imoveis", imovelService.buscarPorUsuario(busca, usuarioLogado, pageable));
 
         Imovel novo = new Imovel();
-        novo.setImobiliaria(new Imobiliaria()); // evita NullPointerException no th:field
+        novo.setImobiliaria(new Imobiliaria());
         model.addAttribute("imovel", novo);
 
         model.addAttribute("imobiliarias", imobiliariaService.findByUsuario(usuarioLogado));
         model.addAttribute("busca", busca);
         model.addAttribute("paginaAtual", page);
 
+        long totalDisponiveis = imovelService.contarPorStatus("Disponível", usuarioLogado);
+        long totalNegociacao = imovelService.contarPorStatus("Reservado", usuarioLogado);
+        long totalVendidos = imovelService.contarPorStatus("Vendido", usuarioLogado);
+
+        model.addAttribute("totalDisponiveis", totalDisponiveis);
+        model.addAttribute("totalNegociacao", totalNegociacao);
+        model.addAttribute("totalVendidos", totalVendidos);
+
         return "imoveis";
     }
+
 
 
     @PostMapping("/salvar")

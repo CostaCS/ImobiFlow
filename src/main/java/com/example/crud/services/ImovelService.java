@@ -109,5 +109,8 @@ public class ImovelService {
         return imovelRepository.findByUsuario(usuario);
     }
 
+    public long contarPorStatus(String status, Usuario usuario) {
+        return imovelRepository.countByStatusAndUsuario(status, usuario);
+    }
 
 }
