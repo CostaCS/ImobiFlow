@@ -32,6 +32,11 @@ public class Cliente {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "imobiliaria_id", nullable = true)
+    private Imobiliaria imobiliaria;
+
+
 
     public Cliente(RequestCliente requestCliente) {
         this.nome = requestCliente.nome();

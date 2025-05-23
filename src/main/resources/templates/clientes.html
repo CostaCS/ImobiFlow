@@ -29,18 +29,77 @@
 
 <!-- Lista de Clientes em Cards -->
 <div class="container mt-5">
+
+    <div class="row text-center mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="bi bi-people-fill fs-2 text-primary"></i>
+                    <h6 class="mt-2">Total de Clientes</h6>
+                    <h3 class="fw-bold text-primary" th:text="${totalClientes}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="bi bi-buildings-fill fs-2 text-dark"></i>
+                    <h6 class="mt-2">Imobiliária com Mais Clientes</h6>
+                    <p class="fw-bold mb-0" th:text="${imobiliariaMaisClientes != null ? imobiliariaMaisClientes : 'Nenhuma'}">Nenhuma</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="bi bi-person-dash-fill fs-2 text-secondary"></i>
+                    <h6 class="mt-2">Clientes Sem Imobiliária</h6>
+                    <h3 class="fw-bold text-secondary" th:text="${clientesSemImobiliaria}">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <h3 class="mb-4">Clientes</h3>
 
     <div class="d-flex justify-content-end gap-2 mb-4">
-        <form th:action="@{/clientes}" method="get" class="d-flex">
-            <input type="text" name="busca" class="form-control form-control-sm me-2" placeholder="Pesquisar por nome ou email" th:value="${busca}">
-            <button type="submit" class="btn btn-sm btn-primary">
-                <i class="bi bi-search"></i> Buscar
-            </button>
+        <form th:action="@{/clientes}" method="get" class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <input type="text" name="busca" class="form-control form-control-sm" placeholder="Nome ou E-mail" th:value="${busca}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="telefone" class="form-control form-control-sm" placeholder="Telefone" th:value="${telefone}">
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="endereco" class="form-control form-control-sm" placeholder="Endereço" th:value="${endereco}">
+            </div>
+            <div class="col-md-2">
+                <select name="imobiliariaId" class="form-select form-select-sm">
+                    <option value="">Todas Imobiliárias</option>
+                    <option th:each="imob : ${imobiliarias}" th:value="${imob.id}" th:text="${imob.nome}"
+                            th:selected="${imob.id == imobiliariaId}"></option>
+                </select>
+            </div>
+            <div class="col-md-1 d-grid">
+                <button type="submit" class="btn btn-primary btn-sm h-100">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+            <div class="col-md-1 d-grid">
+                <a th:href="@{/clientes}" class="btn btn-outline-secondary btn-sm h-100">
+                    Limpar
+                </a>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="button" class="btn btn-dark btn-sm h-100 w-100" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalNovo()">
+                    <i class="bi bi-plus-circle me-1"></i> Adicionar Novo Cliente
+                </button>
+            </div>
         </form>
-        <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalNovo()">
-            <i class="bi bi-plus-circle me-1"></i> Adicionar Novo Cliente
-        </button>
     </div>
 
     <div th:if="${#lists.isEmpty(clientes.content)}" class="alert alert-warning text-center">
@@ -58,12 +117,15 @@
                     <p class="card-text" th:text="${cliente.email}">email@email.com</p>
                     <p class="card-text" th:text="${cliente.telefone}">(11) 99999-9999</p>
                     <p class="card-text"><strong>Endereço:</strong> <span th:text="${cliente.endereco}"></span></p>
-
+                    <p class="card-text">
+                        <strong>Imobiliária:</strong>
+                        <span th:text="${cliente.imobiliaria != null} ? ${cliente.imobiliaria.nome} : 'Nenhuma'"></span>
+                    </p>
                     <div class="d-flex justify-content-center gap-2 mt-3">
                         <button class="btn btn-warning btn-sm"
                                 data-bs-toggle="modal"
                                 data-bs-target="#clienteModal"
-                                th:attr="onclick=|editarCliente('${cliente.id}', '${cliente.nome}', '${cliente.email}', '${cliente.telefone}', '${cliente.endereco}')|">
+                                th:attr="onclick=|editarCliente('${cliente.id}', '${cliente.nome}', '${cliente.email}', '${cliente.telefone}', '${cliente.endereco}', '${cliente.imobiliaria != null ? cliente.imobiliaria.id : ''}')|">
                             Editar
                         </button>
                         <button class="btn btn-danger btn-sm"
@@ -124,6 +186,13 @@
                         <label for="clienteEndereco">Endereço:</label>
                         <input type="text" th:field="*{endereco}" id="clienteEndereco" class="form-control"/>
                     </div>
+                    <div class="mb-3">
+                        <label for="clienteImobiliaria">Imobiliária:</label>
+                        <select th:field="*{imobiliaria.id}" id="clienteImobiliaria" class="form-select">
+                            <option value="">Nenhuma</option>
+                            <option th:each="imob : ${imobiliarias}" th:value="${imob.id}" th:text="${imob.nome}"></option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -155,17 +224,20 @@
 
 <!-- Scripts -->
 <script>
-    function editarCliente(id, nome, email, telefone, endereco) {
+    function editarCliente(id, nome, email, telefone, endereco, imobiliariaId) {
         document.getElementById('clienteId').value = id;
         document.getElementById('clienteNome').value = nome;
         document.getElementById('clienteEmail').value = email;
         document.getElementById('clienteTelefone').value = telefone;
         document.getElementById('clienteEndereco').value = endereco;
+        document.getElementById('clienteImobiliaria').value = imobiliariaId || '';
     }
 
+
     function abrirModalNovo() {
-        editarCliente('', '', '', '', '');
+        editarCliente('', '', '', '', '', '');
     }
+
 
     const modalExclusao = document.getElementById('modalConfirmarExclusao');
     modalExclusao.addEventListener('show.bs.modal', function (event) {
