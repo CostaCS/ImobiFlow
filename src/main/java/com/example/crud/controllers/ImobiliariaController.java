@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import com.example.crud.domain.entitys.Usuario;
 import com.example.crud.repositories.UsuarioRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.example.crud.integration.ViaCepService;
+import com.example.crud.integration.ViaCepResponse;
 
 
 @Controller
@@ -27,6 +29,9 @@ public class ImobiliariaController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ViaCepService viaCepService;
 
 
     /* ROTAS API REST (JSON)
@@ -98,12 +103,24 @@ public class ImobiliariaController {
 
 
     @PostMapping("/salvar")
-    public String salvarImobiliaria(@ModelAttribute("imobiliaria") Imobiliaria i,
-                                    @AuthenticationPrincipal Usuario usuarioLogado,
-                                    RedirectAttributes redirectAttributes) {
+    public String salvarImobiliaria(
+            @ModelAttribute("imobiliaria") Imobiliaria i,
+            @AuthenticationPrincipal Usuario usuarioLogado,
+            RedirectAttributes redirectAttributes) {
         try {
+            // ← busca dados de logradouro a partir do CEP
+            var cepInfo = viaCepService.buscarPorCep(i.getCep());
+            if (cepInfo != null) {
+                i.setEndereco(
+                        cepInfo.getLogradouro() + ", " +
+                                cepInfo.getBairro()     + " – " +
+                                cepInfo.getLocalidade() + "/" +
+                                cepInfo.getUf()
+                );
+            }
             imobiliariaService.salvarOuAtualizar(i, usuarioLogado);
-            redirectAttributes.addFlashAttribute("mensagem", "Imobiliária cadastrada com sucesso!");
+            redirectAttributes.addFlashAttribute("mensagem",
+                    "Imobiliária cadastrada com sucesso!");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("erro", e.getMessage());
             redirectAttributes.addFlashAttribute("abrirModal", true);

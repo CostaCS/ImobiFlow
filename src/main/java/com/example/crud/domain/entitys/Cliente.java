@@ -26,6 +26,9 @@ public class Cliente {
 
     private String telefone;
 
+    @Column(nullable = false, length = 9)
+    private String cep;
+
     private String endereco;
 
     @ManyToOne
@@ -42,6 +45,7 @@ public class Cliente {
         this.nome = requestCliente.nome();
         this.email = requestCliente.email();
         this.telefone = requestCliente.telefone();
+        this.cep = requestCliente.cep();
         this.endereco = requestCliente.endereco();
     }
 }

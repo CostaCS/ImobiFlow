@@ -38,7 +38,8 @@ public class ClienteController {
     @Autowired
     private ImobiliariaService imobiliariaService;
 
-
+    @Autowired
+    private com.example.crud.integration.ViaCepService viaCepService;
 
     //ROTAS JSON (API)
 
@@ -126,7 +127,17 @@ public class ClienteController {
                                 @AuthenticationPrincipal Usuario usuarioLogado,
                                 RedirectAttributes redirectAttributes) {
         try {
-            clienteService.salvar(cliente, usuarioLogado); // corrigido
+            // 2) antes de chamar o service, resolva o endereço via CEP
+            var cepInfo = viaCepService.buscarPorCep(cliente.getCep());
+            if (cepInfo != null) {
+                cliente.setEndereco(
+                        cepInfo.getLogradouro() + ", " +
+                                cepInfo.getBairro()    + " – " +
+                                cepInfo.getLocalidade()+ "/" +
+                                cepInfo.getUf()
+                );
+            }
+            clienteService.salvar(cliente, usuarioLogado);
             redirectAttributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
         } catch (IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("mensagemErro", ex.getMessage());

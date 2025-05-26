@@ -30,6 +30,9 @@ public class Imobiliaria {
 
     private String telefone;
 
+    @Column(nullable = false, length = 9)
+    private String cep;
+
     private String endereco;
 
     @ManyToOne
@@ -40,11 +43,13 @@ public class Imobiliaria {
     private List<Negociacao> negociacoes;
 
 
+
     public Imobiliaria(RequestImobiliaria requestImobiliaria) {
         this.nome = requestImobiliaria.nome();
         this.cnpj = requestImobiliaria.cnpj();
         this.email = requestImobiliaria.email();
         this.telefone = requestImobiliaria.telefone();
+        this.cep = requestImobiliaria.cep();
         this.endereco = requestImobiliaria.endereco();
     }
 }

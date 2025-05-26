@@ -98,7 +98,7 @@
                         <button type="button" class="btn btn-warning btn-sm"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalCadastro"
-                                th:attr="onclick=|editarImobiliaria('${i.id}', '${i.nome}', '${i.cnpj}', '${i.telefone}', '${i.email}', '${i.endereco}')|">
+                                th:attr="onclick=|editarImobiliaria('${i.id}', '${i.nome}', '${i.cnpj}', '${i.telefone}', '${i.email}', '${i.endereco}', '${i.cep}')|">
                             Editar
                         </button>
                         <button type="button" class="btn btn-danger btn-sm"
@@ -164,8 +164,22 @@
                         <input type="email" th:field="*{email}" id="imobiliariaEmail" class="form-control">
                     </div>
                     <div class="mb-3">
+                        <label for="imobiliariaCep">CEP</label>
+                        <input type="text"
+                               th:field="*{cep}"
+                               id="imobiliariaCep"
+                               class="form-control"
+                               placeholder="00000-000"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="imobiliariaEndereco">Endereço</label>
-                        <input type="text" th:field="*{endereco}" id="imobiliariaEndereco" class="form-control">
+                        <input type="text"
+                               th:field="*{endereco}"
+                               id="imobiliariaEndereco"
+                               class="form-control"
+                               readonly>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -198,18 +212,21 @@
 
 <!-- Scripts -->
 <script>
-    function editarImobiliaria(id, nome, cnpj, telefone, email, endereco) {
-      document.getElementById('imobiliariaId').value = id;
-      document.getElementById('imobiliariaNome').value = nome;
-      document.getElementById('imobiliariaCnpj').value = cnpj;
-      document.getElementById('imobiliariaTelefone').value = telefone;
-      document.getElementById('imobiliariaEmail').value = email;
-      document.getElementById('imobiliariaEndereco').value = endereco;
+    function editarImobiliaria(id, nome, cnpj, telefone, email, endereco, cep) {
+      document.getElementById('imobiliariaId').value        = id;
+      document.getElementById('imobiliariaNome').value      = nome;
+      document.getElementById('imobiliariaCnpj').value      = cnpj;
+      document.getElementById('imobiliariaTelefone').value  = telefone;
+      document.getElementById('imobiliariaEmail').value     = email;
+      document.getElementById('imobiliariaCep').value       = cep || '';
+      document.getElementById('imobiliariaEndereco').value  = endereco;
     }
 
+
     function abrirModalNovo() {
-      editarImobiliaria('', '', '', '', '', '');
+      editarImobiliaria('', '', '', '', '', '', '');
     }
+
 
     const modalExclusao = document.getElementById('modalConfirmarExclusao');
     modalExclusao.addEventListener('show.bs.modal', function (event) {
@@ -233,6 +250,25 @@
     const modal = new bootstrap.Modal(document.getElementById('modalCadastro'));
     modal.show();
 </script>
+
+<script>
+    document.getElementById('imobiliariaCep').addEventListener('blur', async () => {
+      const cep = document.getElementById('imobiliariaCep').value.replace(/\D/g, '');
+      if (cep.length !== 8) return;
+
+      try {
+        const res = await fetch(`/api/cep/${cep}`);
+        if (!res.ok) throw new Error('CEP não encontrado');
+        const data = await res.json();
+        document.getElementById('imobiliariaEndereco').value =
+          `${data.logradouro}, ${data.bairro} – ${data.localidade}/${data.uf}`;
+      } catch (err) {
+        console.warn(err);
+        document.getElementById('imobiliariaEndereco').value = '';
+      }
+    });
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <th:block th:replace="fragments/footer :: footer"/>

@@ -24,6 +24,9 @@ public class Imovel {
 
     private String descricao;
 
+    @Column(nullable = false, length = 9)
+    private String cep;
+
     private String endereco;
 
     private String tipoImovel;
@@ -46,7 +49,6 @@ public class Imovel {
     @Column(name = "preco_condominio", nullable = true)
     private Double precoCondominio;
 
-
     @ManyToOne
     @JoinColumn(name = "idImobiliaria", nullable = false)
     private Imobiliaria imobiliaria;
@@ -62,6 +64,7 @@ public class Imovel {
     public Imovel(RequestImovel request) {
         this.titulo = request.titulo();
         this.descricao = request.descricao();
+        this.cep = request.cep();
         this.endereco = request.endereco();
         this.tipoImovel = request.tipoImovel();
         this.metragem = request.metragem();
