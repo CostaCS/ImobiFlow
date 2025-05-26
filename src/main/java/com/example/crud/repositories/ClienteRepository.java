@@ -1,4 +1,4 @@
-package com.example.crud.repositorys;
+package com.example.crud.repositories;
 
 import com.example.crud.domain.entitys.Cliente;
 import com.example.crud.domain.entitys.Usuario;

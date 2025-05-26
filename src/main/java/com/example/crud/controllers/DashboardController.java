@@ -2,8 +2,8 @@ package com.example.crud.controllers;
 
 import com.example.crud.domain.entitys.Negociacao;
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.ImovelRepository;
-import com.example.crud.repositorys.NegociacaoRepository;
+import com.example.crud.repositories.ImovelRepository;
+import com.example.crud.repositories.NegociacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,7 +29,7 @@ public class DashboardController {
         model.addAttribute("imoveisPorTipo", imoveisPorTipo != null ? imoveisPorTipo : Collections.emptyList());
 
         // Negociações por status (filtrando por usuário)
-        List<Object[]> negociacoesPorStatus = negociacaoRepository.countNegociacoesByStatusPorUsuario(usuarioLogado);
+        List<Object[]> negociacoesPorStatus = negociacaoRepository.contarPorStatusTodos(usuarioLogado);
         model.addAttribute("negociacoesPorStatus", negociacoesPorStatus != null ? negociacoesPorStatus : Collections.emptyList());
 
         // Última negociação (filtrando por usuário)

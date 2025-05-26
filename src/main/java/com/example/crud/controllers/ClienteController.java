@@ -20,7 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.UsuarioRepository;
+import com.example.crud.repositories.UsuarioRepository;
 
 
 

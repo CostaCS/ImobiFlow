@@ -63,34 +63,63 @@ public class ImovelController {
     //ROTAS HTML
 
     @GetMapping("/pagina")
-    public String listarImoveis(@AuthenticationPrincipal Usuario usuarioLogado,
-                                @RequestParam(defaultValue = "") String busca,
-                                @RequestParam(defaultValue = "0") int page,
-                                Model model) {
-
-        System.out.println("Usuário logado: " + usuarioLogado);
+    public String listarImoveisComFiltro(
+            @AuthenticationPrincipal Usuario usuarioLogado,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Double precoMin,
+            @RequestParam(required = false) Double precoMax,
+            @RequestParam(required = false) Integer quartos,
+            @RequestParam(required = false) Integer banheiros,
+            @RequestParam(required = false) Integer vagas,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) UUID imobiliariaId,
+            @RequestParam(required = false) String descricao,
+            @RequestParam(required = false) String endereco,
+            @RequestParam(required = false) Double precoCondominioMin,
+            @RequestParam(required = false) Double precoCondominioMax,
+            @RequestParam(defaultValue = "0") int page,
+            Model model) {
 
         Pageable pageable = PageRequest.of(page, 10);
-        model.addAttribute("imoveis", imovelService.buscarPorUsuario(busca, usuarioLogado, pageable));
 
+        // chama o service incluindo os novos filtros
+        model.addAttribute("imoveis", imovelService.filtrarImoveis(
+                titulo, tipo, precoMin, precoMax, quartos, banheiros, vagas,
+                status, imobiliariaId, descricao, endereco,
+                precoCondominioMin, precoCondominioMax,
+                usuarioLogado, pageable
+        ));
+
+        // reenvia atributos para o Thymeleaf
+        model.addAttribute("titulo", titulo);
+        model.addAttribute("tipo", tipo);
+        model.addAttribute("precoMin", precoMin);
+        model.addAttribute("precoMax", precoMax);
+        model.addAttribute("quartos", quartos);
+        model.addAttribute("banheiros", banheiros);
+        model.addAttribute("vagas", vagas);
+        model.addAttribute("status", status);
+        model.addAttribute("imobiliariaId", imobiliariaId);
+        model.addAttribute("descricao", descricao);
+        model.addAttribute("endereco", endereco);
+        model.addAttribute("precoCondominioMin", precoCondominioMin);
+        model.addAttribute("precoCondominioMax", precoCondominioMax);
+        model.addAttribute("paginaAtual", page);
+
+        model.addAttribute("totalDisponiveis", imovelService.contarPorStatus("Disponível", usuarioLogado));
+        model.addAttribute("totalNegociacao", imovelService.contarPorStatus("Reservado", usuarioLogado));
+        model.addAttribute("totalVendidos", imovelService.contarPorStatus("Vendido", usuarioLogado));
+
+        model.addAttribute("imobiliarias", imobiliariaService.findByUsuario(usuarioLogado));
         Imovel novo = new Imovel();
         novo.setImobiliaria(new Imobiliaria());
         model.addAttribute("imovel", novo);
 
-        model.addAttribute("imobiliarias", imobiliariaService.findByUsuario(usuarioLogado));
-        model.addAttribute("busca", busca);
-        model.addAttribute("paginaAtual", page);
-
-        long totalDisponiveis = imovelService.contarPorStatus("Disponível", usuarioLogado);
-        long totalNegociacao = imovelService.contarPorStatus("Reservado", usuarioLogado);
-        long totalVendidos = imovelService.contarPorStatus("Vendido", usuarioLogado);
-
-        model.addAttribute("totalDisponiveis", totalDisponiveis);
-        model.addAttribute("totalNegociacao", totalNegociacao);
-        model.addAttribute("totalVendidos", totalVendidos);
-
         return "imoveis";
     }
+
+
 
 
 

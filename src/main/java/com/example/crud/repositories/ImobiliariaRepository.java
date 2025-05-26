@@ -1,4 +1,4 @@
-package com.example.crud.repositorys;
+package com.example.crud.repositories;
 
 import com.example.crud.domain.entitys.Imobiliaria;
 import com.example.crud.domain.entitys.Usuario;
@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ImobiliariaRepository extends JpaRepository<Imobiliaria, UUID> {
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface ImobiliariaRepository extends JpaRepository<Imobiliaria, UUID>, JpaSpecificationExecutor<Imobiliaria> {
 
     // Busca global (sem filtro de usuário)
     Page<Imobiliaria> findByNomeContainingIgnoreCaseOrCnpjContainingIgnoreCase(String nome, String cnpj, Pageable pageable);

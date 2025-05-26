@@ -1,10 +1,10 @@
 package com.example.crud.services;
 
 import com.example.crud.domain.entitys.*;
-import com.example.crud.repositorys.ClienteRepository;
-import com.example.crud.repositorys.ImobiliariaRepository;
-import com.example.crud.repositorys.ImovelRepository;
-import com.example.crud.repositorys.NegociacaoRepository;
+import com.example.crud.repositories.ClienteRepository;
+import com.example.crud.repositories.ImobiliariaRepository;
+import com.example.crud.repositories.ImovelRepository;
+import com.example.crud.repositories.NegociacaoRepository;
 import com.example.crud.requests.RequestNegociacao;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -122,14 +124,32 @@ public class NegociacaoService {
         repository.save(negociacao);
     }
 
-    public Page<Negociacao> buscarPorUsuario(Usuario usuario, Pageable pageable) {
-        return repository.findByUsuario(usuario, pageable);
+
+    public long contarTodas(Usuario usuario) {
+        return repository.countByUsuario(usuario);
     }
 
-    public Page<Negociacao> buscarPorUsuarioComBusca(String busca, Usuario usuario, Pageable pageable) {
-        return repository.findByImobiliariaNomeContainingIgnoreCaseOrClienteNomeContainingIgnoreCaseAndUsuario(
-                busca, busca, usuario, pageable
-        );
+    public String imobiliariaComMaisNegociacoes(Usuario usuario) {
+        return repository.imobiliariaComMaisNegociacoes(usuario.getId());
+    }
+
+    public long contarPorStatus(String status, Usuario usuario) {
+        return repository.countByStatusAndUsuario(status, usuario);
+    }
+
+
+    public Page<Negociacao> filtrarNegociacoes(
+            String cliente,
+            String status,
+            String imobiliariaId,
+            String imovelId,
+            LocalDate data,
+            BigDecimal valorMin,
+            BigDecimal valorMax,
+            Usuario usuario,
+            Pageable pageable
+    ) {
+        return repository.filtrarPorFiltros(cliente, status, imobiliariaId, imovelId,data, valorMin, valorMax, usuario, pageable);
     }
 
 }

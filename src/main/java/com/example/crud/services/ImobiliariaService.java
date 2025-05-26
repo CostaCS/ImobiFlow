@@ -2,16 +2,16 @@ package com.example.crud.services;
 
 import com.example.crud.domain.entitys.Imobiliaria;
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.ImobiliariaRepository;
+import com.example.crud.repositories.ImobiliariaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -110,5 +110,29 @@ public class ImobiliariaService {
         System.out.println("Quantidade retornada: " + resultado.size());
         return resultado;
     }
+
+    public Page<Imobiliaria> buscarComFiltros(String busca, String telefone, String email, Usuario usuario, Pageable pageable) {
+        return repository.findAll((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("usuario"), usuario));
+
+            if (busca != null && !busca.isBlank()) {
+                Predicate nomePredicate = cb.like(cb.lower(root.get("nome")), "%" + busca.toLowerCase() + "%");
+                Predicate cnpjPredicate = cb.like(cb.lower(root.get("cnpj")), "%" + busca.toLowerCase() + "%");
+                predicates.add(cb.or(nomePredicate, cnpjPredicate));
+            }
+
+            if (telefone != null && !telefone.isBlank()) {
+                predicates.add(cb.like(cb.lower(root.get("telefone")), "%" + telefone.toLowerCase() + "%"));
+            }
+
+            if (email != null && !email.isBlank()) {
+                predicates.add(cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        }, pageable);
+    }
+
 
 }

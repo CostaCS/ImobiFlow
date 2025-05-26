@@ -1,7 +1,7 @@
     package com.example.crud.services;
 
     import com.example.crud.domain.entitys.Cliente;
-    import com.example.crud.repositorys.ClienteRepository;
+    import com.example.crud.repositories.ClienteRepository;
     import com.example.crud.requests.RequestCliente;
     import jakarta.persistence.EntityNotFoundException;
     import jakarta.transaction.Transactional;
@@ -10,15 +10,10 @@
     import org.springframework.data.domain.Page;
     import org.springframework.data.domain.Pageable;
     import com.example.crud.domain.entitys.Usuario;
-    import org.springframework.data.domain.Pageable;
-    import org.springframework.data.domain.Page;
-    import com.example.crud.repositorys.ClienteRepository;
     import jakarta.persistence.EntityManager;
     import jakarta.persistence.PersistenceContext;
     import jakarta.persistence.criteria.*;
-    import org.springframework.data.domain.Page;
     import org.springframework.data.domain.PageImpl;
-    import org.springframework.data.domain.Pageable;
 
 
     import java.util.ArrayList;
@@ -194,6 +189,9 @@
             return new PageImpl<>(resultados, pageable, total);
         }
 
+        public List<Cliente> listarTodosPorUsuario(Usuario usuario) {
+            return repository.findByUsuario(usuario);
+        }
 
     }
 

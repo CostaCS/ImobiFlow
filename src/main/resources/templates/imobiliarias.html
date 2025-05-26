@@ -58,23 +58,27 @@
         </div>
     </div>
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <h3 class="me-auto">Imobiliárias</h3>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="mb-0">Imobiliárias</h3>
 
-        <form th:action="@{/imobiliarias}" method="get" class="d-flex align-items-center gap-2">
-            <div class="input-group" style="max-width: 400px;">
-                <input type="text" name="busca" class="form-control" style="min-width: 280px;" placeholder="Pesquisar por nome ou CNPJ" th:value="${busca}">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-search"></i> Buscar
-                </button>
-            </div>
+        <form th:action="@{/imobiliarias}" method="get" class="d-flex gap-2 align-items-center ms-auto">
+            <input type="text" name="busca" class="form-control form-control-sm" placeholder="Nome ou CNPJ" th:value="${busca}" style="width: 180px;">
+            <input type="text" name="telefone" class="form-control form-control-sm" placeholder="Telefone" th:value="${telefone}" style="width: 160px;">
+            <input type="email" name="email" class="form-control form-control-sm" placeholder="Email" th:value="${email}" style="width: 200px;">
+
+            <button type="submit" class="btn btn-primary btn-sm d-flex align-items-center">
+                <i class="bi bi-search me-1"></i> Buscar
+            </button>
+
+            <a th:href="@{/imobiliarias}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+                Limpar
+            </a>
+
+            <button type="button" class="btn btn-dark btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#modalCadastro" onclick="abrirModalNova()">
+                <i class="bi bi-plus-circle me-1"></i> Adicionar Nova Imobiliária
+            </button>
         </form>
-
-        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCadastro" onclick="abrirModalNovo()">
-            <i class="bi bi-plus-circle me-1"></i> Adicionar Nova Imobiliária
-        </button>
     </div>
-
 
     <!-- Cards -->
     <div class="row" th:if="${imobiliarias != null}">

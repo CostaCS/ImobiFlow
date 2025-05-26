@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EntityScan(basePackages = "com.example.crud.domain.entitys")
-@EnableJpaRepositories(basePackages = "com.example.crud.repositorys")
+@EnableJpaRepositories(basePackages = "com.example.crud.repositories")
 public class CrudApplication {
 
 	public static void main(String[] args) {

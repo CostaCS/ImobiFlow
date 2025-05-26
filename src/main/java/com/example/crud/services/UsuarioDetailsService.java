@@ -1,7 +1,6 @@
 package com.example.crud.services;
 
-import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.UsuarioRepository;
+import com.example.crud.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,7 @@
 package com.example.crud.services;
 
-import com.example.crud.domain.entitys.Imobiliaria;
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.UsuarioRepository;
+import com.example.crud.repositories.UsuarioRepository;
 import com.example.crud.requests.RequestUsuario;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

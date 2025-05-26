@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.UsuarioRepository;
+import com.example.crud.repositories.UsuarioRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 
@@ -64,38 +64,36 @@ public class ImobiliariaController {
     @GetMapping
     public String listarImobiliarias(
             @RequestParam(value = "busca", required = false) String busca,
+            @RequestParam(value = "telefone", required = false) String telefone,
+            @RequestParam(value = "email", required = false) String email,
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model,
             Authentication authentication) {
 
         Pageable pageable = PageRequest.of(page, 6);
 
-        // Obtém o usuário logado
         Usuario usuario = usuarioRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        Page<Imobiliaria> imobiliariasPage;
-
-        if (busca != null && !busca.isEmpty()) {
-            imobiliariasPage = imobiliariaService.buscarPorNomeOuCnpjEUsuario(busca, usuario, pageable);
-        } else {
-            imobiliariasPage = imobiliariaService.getAllByUsuario(usuario, pageable);
-        }
+        Page<Imobiliaria> imobiliariasPage = imobiliariaService.buscarComFiltros(busca, telefone, email, usuario, pageable);
 
         model.addAttribute("imobiliarias", imobiliariasPage);
         model.addAttribute("paginaAtual", page);
         model.addAttribute("totalPaginas", imobiliariasPage.getTotalPages());
         model.addAttribute("busca", busca);
+        model.addAttribute("telefone", telefone);
+        model.addAttribute("email", email);
         model.addAttribute("imobiliaria", new Imobiliaria());
         model.addAttribute("modoEdicao", false);
 
-        // Contadores baseados no usuário
+        // Dashboard de contadores
         model.addAttribute("totalImobiliarias", imobiliariaService.contarTotalImobiliariasPorUsuario(usuario));
         model.addAttribute("imobiliariasComNegociacoes", imobiliariaService.contarImobiliariasComNegociacoesPorUsuario(usuario));
         model.addAttribute("imobiliariasSemNegociacoes", imobiliariaService.contarImobiliariasSemNegociacoesPorUsuario(usuario));
 
         return "imobiliarias";
     }
+
 
 
 

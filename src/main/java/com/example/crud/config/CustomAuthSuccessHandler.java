@@ -1,7 +1,7 @@
 package com.example.crud.config;
 
 import com.example.crud.domain.entitys.Usuario;
-import com.example.crud.repositorys.UsuarioRepository;
+import com.example.crud.repositories.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

@@ -1,6 +1,7 @@
 package com.example.crud.controllers;
 
 import com.example.crud.domain.entitys.Usuario;
+import com.example.crud.repositories.NegociacaoRepository;
 import com.example.crud.requests.RequestNegociacao;
 import com.example.crud.services.ClienteService;
 import com.example.crud.services.ImobiliariaService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,11 +21,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import com.example.crud.domain.entitys.Negociacao;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/negociacao")
 public class NegociacaoController {
+
+    @Autowired
+    private NegociacaoRepository repository;
 
     @Autowired
     private NegociacaoService negociacaoService;
@@ -72,32 +80,52 @@ public class NegociacaoController {
     //ROTAS HTML
 
     @GetMapping("/pagina")
-    public String listarNegociacoes(@RequestParam(defaultValue = "") String busca,
-                                    @RequestParam(defaultValue = "0") int page,
-                                    @AuthenticationPrincipal Usuario usuarioLogado,
-                                    Model model) {
+    public String listarNegociacoes(
+            @RequestParam(required = false) String cliente,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String imobiliaria,
+            @RequestParam(required = false) String imovel,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+            @RequestParam(required = false) BigDecimal valorMin,
+            @RequestParam(required = false) BigDecimal valorMax,
+            @RequestParam(defaultValue = "0") int page,
+            @AuthenticationPrincipal Usuario usuarioLogado,
+            Model model) {
 
-        Pageable pageable = PageRequest.of(page, 6); // define paginação
+        Pageable pageable = PageRequest.of(page, 10);
 
-        Page<Negociacao> negociacoes;
-
-        if (busca != null && !busca.isEmpty()) {
-            negociacoes = negociacaoService.buscarPorUsuarioComBusca(busca, usuarioLogado, pageable);
-        } else {
-            negociacoes = negociacaoService.buscarPorUsuario(usuarioLogado, pageable);
-        }
+        Page<Negociacao> negociacoes = negociacaoService.filtrarNegociacoes(
+                cliente, status, imobiliaria, imovel, data, valorMin, valorMax, usuarioLogado, pageable
+        );
 
         model.addAttribute("negociacoes", negociacoes);
         model.addAttribute("paginaAtual", page);
         model.addAttribute("totalPaginas", negociacoes.getTotalPages());
-        model.addAttribute("busca", busca);
+
+        // Manter os filtros preenchidos
+        model.addAttribute("cliente", cliente);
+        model.addAttribute("statusSelecionado", status);
+        model.addAttribute("imobiliariaSelecionada", imobiliaria);
+        model.addAttribute("imovelSelecionado", imovel);
+        model.addAttribute("data", data);
+        model.addAttribute("valorMin", valorMin);
+        model.addAttribute("valorMax", valorMax);
+
+        // Dados para formulário
         model.addAttribute("negociacao", new Negociacao());
-        model.addAttribute("clientes", clienteService.listarTodosPorUsuario(usuarioLogado, pageable));
+        model.addAttribute("clientes", clienteService.listarTodosPorUsuario(usuarioLogado, Pageable.unpaged()).getContent());
         model.addAttribute("imoveis", imovelService.findByUsuario(usuarioLogado));
         model.addAttribute("imobiliarias", imobiliariaService.findByUsuario(usuarioLogado));
 
+        // Indicadores
+        model.addAttribute("totalNegociacoes", negociacaoService.contarTodas(usuarioLogado));
+        model.addAttribute("imobiliariaTop", negociacaoService.imobiliariaComMaisNegociacoes(usuarioLogado));
+        model.addAttribute("propostasEnviadas", negociacaoService.contarPorStatus("Proposta enviada", usuarioLogado));
+        model.addAttribute("pendentes", negociacaoService.contarPorStatus("Em andamento", usuarioLogado));
+
         return "negociacoes";
     }
+
 
 
     @PostMapping("/salvar")
@@ -116,5 +144,6 @@ public class NegociacaoController {
         redirectAttributes.addFlashAttribute("mensagem", "Negociação excluída com sucesso!");
         return "redirect:/negociacao/pagina";
     }
+
 
 }

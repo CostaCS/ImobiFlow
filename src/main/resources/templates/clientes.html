@@ -64,9 +64,10 @@
 
 
 
-    <h3 class="mb-4">Clientes</h3>
 
-    <div class="d-flex justify-content-end gap-2 mb-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="mb-0">Clientes</h3>
         <form th:action="@{/clientes}" method="get" class="row g-2 align-items-end">
             <div class="col-md-2">
                 <input type="text" name="busca" class="form-control form-control-sm" placeholder="Nome ou E-mail" th:value="${busca}">
