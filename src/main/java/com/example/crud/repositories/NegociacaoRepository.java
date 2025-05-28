@@ -39,4 +39,17 @@ public interface NegociacaoRepository extends JpaRepository<Negociacao, UUID>, N
 
     @Query("SELECT n.imobiliaria.nome FROM Negociacao n WHERE n.usuario.id = :usuarioId GROUP BY n.imobiliaria.nome ORDER BY COUNT(n) DESC LIMIT 1")
     String imobiliariaComMaisNegociacoes(@Param("usuarioId") UUID usuarioId);
+
+    @Query("""
+      SELECT n.cliente.nome     AS nome,
+             COUNT(n)           AS total
+      FROM Negociacao n
+      WHERE n.usuario.id = :usuarioId
+      GROUP BY n.cliente.nome
+      ORDER BY total DESC
+    """)
+    List<Object[]> findTopClientes(
+            @Param("usuarioId") UUID usuarioId,
+            Pageable pageable
+    );
 }

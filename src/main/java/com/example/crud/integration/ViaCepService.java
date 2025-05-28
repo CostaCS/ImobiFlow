@@ -14,9 +14,6 @@ public class ViaCepService {
                 .build();
     }
 
-    /**
-     * Busca dados de CEP. Retorna null se ocorrer erro ou CEP não existir.
-     */
     public com.example.crud.integration.ViaCepResponse buscarPorCep(String cep) {
         String somenteDigitos = cep.replaceAll("\\D", "");
         com.example.crud.integration.ViaCepResponse resp = client.get()

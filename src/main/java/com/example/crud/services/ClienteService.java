@@ -95,16 +95,9 @@
             return repository.findById(id).orElse(null);
         }
 
-        public Page<Cliente> buscarPorNomeOuEmail(String termo, Pageable pageable) {
-            return repository.findByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(termo, termo, pageable);
-        }
 
         public Page<Cliente> listarTodosPorUsuario(Usuario usuario, Pageable pageable) {
             return repository.findByUsuario(usuario, pageable);
-        }
-
-        public Page<Cliente> buscarPorNomeOuEmailEUsuario(String busca, Usuario usuario, Pageable pageable) {
-            return repository.findByNomeContainingIgnoreCaseOrEmailContainingIgnoreCaseAndUsuario(busca, busca, usuario, pageable);
         }
 
         public long contarTodos(Usuario usuario) {
