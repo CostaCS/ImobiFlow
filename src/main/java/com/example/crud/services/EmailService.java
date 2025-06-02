@@ -11,6 +11,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    // Envia o e-mail de recuperação de senha
     public void enviarEmailRecuperacao(String destinatario, String token) {
         String assunto = "Recuperação de Senha - ImobiFlow";
         String link = "http://localhost:8080/usuario/resetar-senha?token=" + token;

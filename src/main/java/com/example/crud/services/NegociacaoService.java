@@ -34,10 +34,14 @@ public class NegociacaoService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+
+    // Retorna todas as negociações cadastradas no banco de dados via JSON
     public List<Negociacao> getAllNegociacoes() {
         return repository.findAll();
     }
 
+
+    // Registra uma nova negociação no sistema, vinculando cliente, imóvel e imobiliária informados na requisição, via JSON
     public void registerNegociacao(RequestNegociacao request) {
         Imovel imovel = imovelRepository.findById(request.idImovel())
                 .orElseThrow(() -> new EntityNotFoundException("Imóvel não encontrado"));
@@ -57,6 +61,7 @@ public class NegociacaoService {
         repository.save(negociacao);
     }
 
+    // Atualiza dos dados de negociação, via JSON
     public Negociacao updateNegociacao(UUID id, RequestNegociacao data) {
         Negociacao negociacao = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Negociação não encontrada"));
@@ -82,6 +87,7 @@ public class NegociacaoService {
         return repository.save(negociacao);
     }
 
+    // Deleta uma negociação do sistema via JSON
     @Transactional
     public void deleteNegociacao(UUID id) {
         Optional<Negociacao> optionalNegociacao = repository.findById(id);
@@ -92,11 +98,8 @@ public class NegociacaoService {
         }
     }
 
-    public Optional<Negociacao> buscarPorId(UUID id) {
-        return repository.findById(id);
-    }
 
-    //HTML
+    //Salva uma negociação no sistema na página html pelo usuário informado
     public void salvarViaHTML(Negociacao negociacao, Usuario usuario) {
 
         UUID idCliente = negociacao.getCliente().getId();
@@ -124,20 +127,22 @@ public class NegociacaoService {
         repository.save(negociacao);
     }
 
-
+    // Retorna a quantidade total de negociações registradas pelo usuário informado
     public long contarTodas(Usuario usuario) {
         return repository.countByUsuario(usuario);
     }
 
+    // Retorna a imobliaria com mais negociações vinculadas pelo usuário informado
     public String imobiliariaComMaisNegociacoes(Usuario usuario) {
         return repository.imobiliariaComMaisNegociacoes(usuario.getId());
     }
 
+    // Retorna a quantidade de negociações por cada status
     public long contarPorStatus(String status, Usuario usuario) {
         return repository.countByStatusAndUsuario(status, usuario);
     }
 
-
+    // Aplica filtros dinâmicos nas negociações com base nos parâmetros informados e retorna os resultados paginados
     public Page<Negociacao> filtrarNegociacoes(
             String cliente,
             String status,

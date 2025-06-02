@@ -2,6 +2,7 @@ package com.example.crud.controllers;
 
 import com.example.crud.domain.entitys.Imobiliaria;
 import com.example.crud.services.ImobiliariaService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -145,10 +146,17 @@ public class ImobiliariaController {
 
     @GetMapping("/excluir/{id}")
     public String excluirImobiliaria(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
-        imobiliariaService.deleteImobiliaria(id);
-        redirectAttributes.addFlashAttribute("mensagem", "Imobiliária excluída com sucesso!");
+        try {
+            imobiliariaService.deleteImobiliaria(id);
+            redirectAttributes.addFlashAttribute("mensagem", "Imobiliária excluída com sucesso!");
+        } catch (DataIntegrityViolationException ex) {
+            redirectAttributes.addFlashAttribute("erro", "Não é possível excluir esta imobiliária, pois ela está vinculada a clientes, imóveis ou negociações.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("erro", "Erro inesperado ao tentar excluir a imobiliária.");
+        }
         return "redirect:/imobiliarias";
     }
+
 
     @GetMapping("/novo")
     public String novaImobiliaria(Model model) {

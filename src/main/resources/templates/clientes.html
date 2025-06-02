@@ -126,7 +126,7 @@
                         <button class="btn btn-warning btn-sm"
                                 data-bs-toggle="modal"
                                 data-bs-target="#clienteModal"
-                                th:attr="onclick=|editarCliente('${cliente.id}', '${cliente.nome}', '${cliente.email}', '${cliente.telefone}', '${cliente.endereco}', '${cliente.imobiliaria != null ? cliente.imobiliaria.id : ''}')|">
+                                th:attr="onclick=|editarCliente('${cliente.id}', '${cliente.nome}', '${cliente.email}', '${cliente.telefone}','${cliente.cep}', '${cliente.endereco}', '${cliente.imobiliaria != null ? cliente.imobiliaria.id : ''}')|">
                             Editar
                         </button>
                         <button class="btn btn-danger btn-sm"
@@ -194,7 +194,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="clienteEndereco">Endereço:</label>
-                        <input type="text" th:field="*{endereco}" id="clienteEndereco" class="form-control" readonly/>
+                        <input type="text" th:field="*{endereco}" id="clienteEndereco" class="form-control"/>
                     </div>
                     <div class="mb-3">
                         <label for="clienteImobiliaria">Imobiliária:</label>
@@ -234,11 +234,12 @@
 
 <!-- Scripts -->
 <script>
-    function editarCliente(id, nome, email, telefone, endereco, imobiliariaId) {
+    function editarCliente(id, nome, email, telefone, cep,endereco, imobiliariaId) {
         document.getElementById('clienteId').value = id;
         document.getElementById('clienteNome').value = nome;
         document.getElementById('clienteEmail').value = email;
         document.getElementById('clienteTelefone').value = telefone;
+        document.getElementById('clienteCep').value = cep;
         document.getElementById('clienteEndereco').value = endereco;
         document.getElementById('clienteImobiliaria').value = imobiliariaId || '';
     }

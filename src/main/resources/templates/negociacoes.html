@@ -202,36 +202,36 @@
           <input type="hidden" th:field="*{id}" id="negociacaoId"/>
           <div class="mb-3">
             <label>Cliente</label>
-            <select th:field="*{cliente.id}" id="clienteSelect" class="form-select">
+            <select th:field="*{cliente.id}" id="clienteSelect" class="form-select" required>
               <option value="" disabled>Selecione...</option>
               <option th:each="c:${clientes}" th:value="${c.id}" th:text="${c.nome}"></option>
             </select>
           </div>
           <div class="mb-3">
             <label>Imóvel</label>
-            <select th:field="*{imovel.id}" id="imovelSelect" class="form-select">
+            <select th:field="*{imovel.id}" id="imovelSelect" class="form-select" required>
               <option value="" disabled>Selecione...</option>
               <option th:each="i:${imoveis}" th:value="${i.id}" th:text="${i.titulo}"></option>
             </select>
           </div>
           <div class="mb-3">
             <label>Imobiliária</label>
-            <select th:field="*{imobiliaria.id}" id="imobiliariaSelect" class="form-select">
+            <select th:field="*{imobiliaria.id}" id="imobiliariaSelect" class="form-select" required>
               <option value="" disabled>Selecione...</option>
               <option th:each="ib:${imobiliarias}" th:value="${ib.id}" th:text="${ib.nome}"></option>
             </select>
           </div>
           <div class="mb-3">
             <label>Contato do Cliente</label>
-            <input type="text" th:field="*{contatoCliente}" id="contatoCliente" class="form-control" readonly/>
+            <input type="text" th:field="*{contatoCliente}" id="contatoCliente" class="form-control" required/>
           </div>
           <div class="mb-3">
             <label>Valor Proposto (R$)</label>
-            <input type="number" step="0.01" th:field="*{valorProposto}" id="valorProposto" class="form-control"/>
+            <input type="number" step="0.01" th:field="*{valorProposto}" id="valorProposto" class="form-control" required/>
           </div>
           <div class="mb-3">
             <label>Status</label>
-            <select th:field="*{status}" id="statusSelect" class="form-select">
+            <select th:field="*{status}" id="statusSelect" class="form-select" required>
               <option value="Em andamento">Em andamento</option>
               <option value="Proposta enviada">Proposta enviada</option>
               <option value="Em Análise pelo Cliente">Em Análise pelo Cliente</option>

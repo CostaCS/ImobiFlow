@@ -28,15 +28,17 @@
         private ClienteRepository repository;
 
 
+        //Retorna todos os clientes cadastrados no sistema (sem paginação)
         public List<Cliente> getAllClientes() {
             return repository.findAll();
         }
 
+        //Registra um novo cliente a partir dos dados recebidos
         public void registerCliente(RequestCliente data) {
             Cliente newCliente = new Cliente(data);
             repository.save(newCliente);
         }
-
+        //Atualiza os dados de um cliente existente com base no ID informado
         @Transactional
         public Cliente updateCliente(RequestCliente data) {
             Optional<Cliente> optionalCliente = repository.findById(data.id());
@@ -51,7 +53,7 @@
                 throw new EntityNotFoundException();
             }
         }
-
+        //Exclui um cliente do sistema com base no ID informado
         @Transactional
         public void deleteCliente(UUID id) {
             Optional<Cliente> optionalCliente = repository.findById(id);
@@ -63,11 +65,12 @@
         }
 
         //Service para HTML
-
+        //Retorna todos os clientes paginados
         public Page<Cliente> listarTodos(Pageable pageable) {
             return repository.findAll(pageable);
         }
 
+        //Salva ou atualiza um cliente, associando ao usuário logado e validando duplicidade de e-mail
         public void salvar(Cliente cliente, Usuario usuario) {
             Optional<Cliente> existente = repository.findByEmailIgnoreCase(cliente.getEmail());
 
@@ -84,41 +87,37 @@
             repository.save(cliente);
         }
 
-
-
-
+        // Exclui um cliente diretamente pelo ID
         public void deletar(UUID id) {
             repository.deleteById(id);
         }
 
-        public Cliente buscarPorId(UUID id) {
-            return repository.findById(id).orElse(null);
-        }
-
-
+        //Retorna todos os clientes paginados vinculados a um usuário específico
         public Page<Cliente> listarTodosPorUsuario(Usuario usuario, Pageable pageable) {
             return repository.findByUsuario(usuario, pageable);
         }
 
+        //Retorna o total de clientes vinculados a um usuário
         public long contarTodos(Usuario usuario) {
             return repository.countByUsuario(usuario);
         }
 
+        //Retorna o total de clientes sem imobiliária vinculada, por usuário
         public long contarSemImobiliaria(Usuario usuario) {
             return repository.countByUsuarioAndImobiliariaIsNull(usuario);
         }
 
+        // Busca a imobiliaria com mais clientes vinculados a ela por usuário logado
         public String buscarImobiliariaComMaisClientes(Usuario usuario) {
             return repository.buscarNomeImobiliariaComMaisClientes(usuario).stream().findFirst().orElse(null);
         }
 
         @PersistenceContext
         private EntityManager entityManager;
-
+        //Aplica filtros dinâmicos para busca avançada de clientes vinculados a um usuário, com paginação
         public Page<Cliente> buscarComFiltros(String busca, String telefone, String endereco, UUID imobiliariaId, Usuario usuario, Pageable pageable) {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-            // ------------------ Query principal ------------------
             CriteriaQuery<Cliente> cq = cb.createQuery(Cliente.class);
             Root<Cliente> cliente = cq.from(Cliente.class);
 
@@ -145,13 +144,11 @@
 
             cq.where(predicates.toArray(new Predicate[0]));
 
-            // Paginação e execução da query
             List<Cliente> resultados = entityManager.createQuery(cq)
                     .setFirstResult((int) pageable.getOffset())
                     .setMaxResults(pageable.getPageSize())
                     .getResultList();
 
-            // ------------------ Query de contagem ------------------
             CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
             Root<Cliente> countRoot = countQuery.from(Cliente.class);
 
@@ -182,6 +179,7 @@
             return new PageImpl<>(resultados, pageable, total);
         }
 
+        // Lista todos os clientes vinculados ao usuário (sem paginação)
         public List<Cliente> listarTodosPorUsuario(Usuario usuario) {
             return repository.findByUsuario(usuario);
         }

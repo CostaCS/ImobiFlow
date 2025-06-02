@@ -38,10 +38,12 @@ public class ImovelService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    // Retorna todos os imóveis cadastrados no sistema
     public List<Imovel> getAllImoveis() {
         return imovelRepository.findAll();
     }
 
+    //Registra um novo imóvel no sistema, associando a uma imobiliária existente
     @Transactional
     public void registerImovel(RequestImovel request) {
         Imobiliaria imobiliaria = imobiliariaRepository.findById(request.idImobiliaria())
@@ -51,6 +53,7 @@ public class ImovelService {
         imovelRepository.save(imovel);
     }
 
+    //Atualiza os dados de um imóvel existente com base no ID informado
     @Transactional
     public Imovel updateImovel(UUID id, RequestImovel request) {
         Imovel imovel = imovelRepository.findById(id)
@@ -69,6 +72,7 @@ public class ImovelService {
         return imovel;
     }
 
+    //  Exclui um imóvel do sistema com base no ID informado
     @Transactional
     public void deleteImovel(UUID id) {
         Optional<Imovel> optionalImovel = imovelRepository.findById(id);
@@ -80,7 +84,7 @@ public class ImovelService {
     }
 
     // HTML
-
+    //Salva um imóvel via formulário HTML, associando ao usuário logado e definindo a data de cadastro
     public void salvarViaHTML(Imovel imovel, Usuario usuario) {
         imovel.setDataCadastro(LocalDate.now());
         UUID idImobiliaria = imovel.getImobiliaria().getId();
@@ -91,6 +95,7 @@ public class ImovelService {
         imovelRepository.save(imovel);
     }
 
+    //Realiza busca paginada de imóveis do usuário, com filtro por título ou endereço
     public Page<Imovel> buscarPorUsuario(String busca, Usuario usuario, Pageable pageable) {
         if (busca != null && !busca.isEmpty()) {
             return imovelRepository
@@ -102,14 +107,17 @@ public class ImovelService {
         }
     }
 
+    //Retorna todos os imóveis cadastrados por um usuário (sem paginação)
     public List<Imovel> findByUsuario(Usuario usuario) {
         return imovelRepository.findByUsuario(usuario);
     }
 
+    //Conta o número de imóveis com um determinado status para um usuário específico
     public long contarPorStatus(String status, Usuario usuario) {
         return imovelRepository.countByStatusAndUsuario(status, usuario);
     }
 
+    //Aplica filtros avançados nos imóveis com base em múltiplos critérios e retorna os resultados paginados
     public Page<Imovel> filtrarImoveis(
             String busca,
             String tipo,

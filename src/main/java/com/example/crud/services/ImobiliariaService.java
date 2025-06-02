@@ -21,38 +21,27 @@ public class ImobiliariaService {
     @Autowired
     private ImobiliariaRepository repository;
 
-
-    // Para uso com user-tenant (filtrando por usuário logado)
-    public Page<Imobiliaria> getAllByUsuario(Usuario usuario, Pageable pageable) {
-        return repository.findByUsuario(usuario, pageable);
-    }
-
-    public Page<Imobiliaria> buscarPorNomeOuCnpjEUsuario(String busca, Usuario usuario, Pageable pageable) {
-        return repository.findByUsuarioAndNomeContainingIgnoreCaseOrUsuarioAndCnpjContainingIgnoreCase(
-                usuario, busca, usuario, busca, pageable);
-    }
-
+    // Conta o total de imobiliárias vinculadas a um usuário
     public long contarTotalImobiliariasPorUsuario(Usuario usuario) {
         return repository.countByUsuario(usuario);
     }
 
+    //Conta as imobiliárias do usuário que possuem negociações associadas
     public long contarImobiliariasComNegociacoesPorUsuario(Usuario usuario) {
         return repository.countByUsuarioAndNegociacoesIsNotEmpty(usuario);
     }
 
+    //Conta as imobiliárias do usuário que não possuem negociações associadas
     public long contarImobiliariasSemNegociacoesPorUsuario(Usuario usuario) {
         return repository.countByUsuarioAndNegociacoesIsEmpty(usuario);
     }
 
-    // Métodos antigos (sem filtro por usuário)
+    //  Retorna todas as imobiliárias do sistema com paginação (sem filtro por usuário)
     public Page<Imobiliaria> getAllImobiliarias(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public List<Imobiliaria> getAllImobiliarias() {
-        return repository.findAll();
-    }
-
+    //Exclui uma imobiliária com base no ID informado
     @Transactional
     public void deleteImobiliaria(UUID id) {
         Optional<Imobiliaria> optionalImobiliaria = repository.findById(id);
@@ -63,11 +52,13 @@ public class ImobiliariaService {
         }
     }
 
+    //Busca uma imobiliária pelo ID, lançando exceção se não for encontrada
     public Imobiliaria getById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Imobiliária não encontrada"));
     }
 
+    //Salva ou atualiza uma imobiliária, validando duplicidade de CNPJ e e-mail para o usuário
     public void salvarOuAtualizar(Imobiliaria imobiliaria, Usuario usuario) {
         // Verifica duplicidade de CNPJ para o mesmo usuário
         repository.findByCnpjAndUsuario(imobiliaria.getCnpj(), usuario).ifPresent(i -> {
@@ -87,23 +78,7 @@ public class ImobiliariaService {
         repository.save(imobiliaria);
     }
 
-
-    public Page<Imobiliaria> buscarPorNomeOuCnpj(String termo, Pageable pageable) {
-        return repository.findByNomeContainingIgnoreCaseOrCnpjContainingIgnoreCase(termo, termo, pageable);
-    }
-
-    public long contarTotalImobiliarias() {
-        return repository.count();
-    }
-
-    public long contarImobiliariasComNegociacoes() {
-        return repository.countImobiliariasComNegociacoes();
-    }
-
-    public long contarImobiliariasSemNegociacoes() {
-        return repository.countImobiliariasSemNegociacoes();
-    }
-
+    //Retorna a lista de imobiliárias associadas a um usuário (sem paginação)
     public List<Imobiliaria> findByUsuario(Usuario usuario) {
         System.out.println("Buscando imobiliárias para o usuário: " + usuario.getId());
         List<Imobiliaria> resultado = repository.findByUsuario(usuario);
@@ -111,6 +86,7 @@ public class ImobiliariaService {
         return resultado;
     }
 
+    //Aplica filtros dinâmicos (nome, CNPJ, telefone, e-mail) e retorna imobiliárias do usuário com paginação
     public Page<Imobiliaria> buscarComFiltros(String busca, String telefone, String email, Usuario usuario, Pageable pageable) {
         return repository.findAll((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

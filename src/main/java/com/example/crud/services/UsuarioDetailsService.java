@@ -11,6 +11,7 @@ public class UsuarioDetailsService implements UserDetailsService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    //Carrega os dados do usuário pelo e-mail para fins de autenticação no Spring Security
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return usuarioRepository.findByEmail(email)
