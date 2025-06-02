@@ -1,0 +1,8 @@
+ALTER TABLE cliente
+  ALTER COLUMN endereco TYPE VARCHAR(255);
+
+ALTER TABLE imobiliaria
+  ALTER COLUMN endereco TYPE VARCHAR(255);
+
+ALTER TABLE imovel
+  ALTER COLUMN endereco TYPE VARCHAR(255);
