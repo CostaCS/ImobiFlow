@@ -60,6 +60,7 @@ class ClienteServiceTest {
         RequestCliente req = new RequestCliente(null, "João", "joao@email.com", "11999999999", "Rua A", null);
         clienteService.registerCliente(req);
         verify(repository).save(any(Cliente.class));
+        System.out.println(req);
     }
 
     @Test

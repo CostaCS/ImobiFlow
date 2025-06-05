@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -155,6 +156,16 @@ public class NegociacaoService {
             Pageable pageable
     ) {
         return repository.filtrarPorFiltros(cliente, status, imobiliariaId, imovelId,data, valorMin, valorMax, usuario, pageable);
+    }
+
+    public Negociacao buscarPorId(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Negociação não encontrada"));
+    }
+
+    public long calcularDiasParado(Negociacao negociacao) {
+        if (negociacao.getDataNegociacao() == null) return 0;
+        return ChronoUnit.DAYS.between(negociacao.getDataNegociacao(), LocalDate.now());
     }
 
 }
