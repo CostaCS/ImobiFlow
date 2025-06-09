@@ -6,7 +6,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link th:href="@{/css/styles.css}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
 </head>
+<style>
+    body {
+  font-family: 'Share Tech', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+</style>
 <body class="bg-light d-flex align-items-center" style="min-height: 100vh;">
 
 <header class="custom-header d-flex align-items-center px-4">
@@ -14,53 +25,55 @@
     <h1 class="mb-0 text-white fs-3">ImobiFlow</h1>
 </header>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-lg rounded-4">
-                <div class="card-body p-4">
+<div class="container-fluid d-flex flex-column" style="padding-top: 80px;">
+    <div class="row flex-grow-1">
+        <!-- Coluna Esquerda: Login -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <div class="card shadow-lg rounded-4 p-4 w-75">
+                <div class="text-center mb-4">
+                    <img th:src="@{/images/logo.png}" alt="Logo da Empresa" class="img-fluid" style="max-height: 80px;">
+                </div>
 
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <img th:src="@{/images/logo.png}" alt="Logo da Empresa" class="img-fluid" style="max-height: 80px;">
-                        </div>
+                <div th:if="${mensagem}" class="alert alert-success text-center" role="alert">
+                    <p th:text="${mensagem}"></p>
+                </div>
+
+                <div th:if="${erro}" class="alert alert-danger text-center" role="alert">
+                    <p th:text="${erro}"></p>
+                </div>
+
+                <h2 class="text-center mb-4">Login</h2>
+
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Usuário</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
                     </div>
-
-                    <div th:if="${mensagem}" class="alert alert-success text-center" role="alert">
-                        <p th:text="${mensagem}"></p>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-
-                    <div th:if="${erro}" class="alert alert-danger text-center" role="alert">
-                        <p th:text="${erro}"></p>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
                     </div>
+                </form>
 
-
-                    <h2 class="card-title text-center mb-4">Login</h2>
-
-                    <form th:action="@{/login}" method="post">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Usuário</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Senha</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Entrar</button>
-                        </div>
-                    </form>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="mt-3 text-center p-2 me-6">
-                            <a th:href="@{/usuario/cadastro}"><small class="text-muted">Primeiro acesso</small></a>
-                        </div>
-                        <div class="mt-3 text-center">
-                           <a th:href="@{/usuario/recuperar-senha}"><small class="text-muted">Esqueci minha senha</small></a>
-                        </div>
-                    </div>
-
+                <div class="d-flex justify-content-between mt-3">
+                    <a th:href="@{/usuario/cadastro}"><small class="text-muted">Primeiro acesso</small></a>
+                    <a th:href="@{/usuario/recuperar-senha}"><small class="text-muted">Esqueci minha senha</small></a>
                 </div>
             </div>
+        </div>
+
+
+        <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center bg-light">
+            <img th:src="@{/images/imobiflow.png}"
+                 class="img-fluid animate__animated animate__fadeInRight"
+                 style="max-height: 380px;" alt="Imagem animada">
+
+            <h5 class="mt-4 text-center px-4">
+                Sua plataforma unificada de gestão imobiliária
+            </h5>
         </div>
     </div>
 </div>

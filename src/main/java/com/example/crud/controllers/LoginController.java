@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 @Controller
 public class LoginController {
 
+
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null) {

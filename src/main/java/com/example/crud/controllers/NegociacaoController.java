@@ -146,18 +146,8 @@ public class NegociacaoController {
         return "redirect:/negociacao/pagina";
     }
 
-    @GetMapping("/detalhes/{id}")
-    public String detalhesNegociacao(@PathVariable UUID id, Model model) {
-        Negociacao negociacao = negociacaoService.buscarPorId(id);
-        long diasParado = negociacaoService.calcularDiasParado(negociacao);
-
-        model.addAttribute("negociacao", negociacao);
-        model.addAttribute("diasParado", diasParado);
-        model.addAttribute("corAlerta", diasParado > 30 ? "danger" : diasParado > 10 ? "warning" : "success");
 
 
-        return "detalhes-negociacao";
-    }
 
 
 
