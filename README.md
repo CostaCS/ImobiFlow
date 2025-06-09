@@ -1,45 +1,116 @@
-# Simple CRUD
-This repository contains a simple CRUD project built using Java Spring. The aim of this repository is to practice and share how you can build all CRUD Methods using Java Spring.
+ImobiFlow
 
-This project was build during a [live in my Youtube Channel](https://www.youtube.com/watch?v=tP6wtEaCnSI).
+ImobiFlow é uma aplicação web monolítica para gestão de imobiliárias, clientes, imóveis e negociações, desenvolvida em Java 17 com Spring Boot.
 
-## Table of Contents
+🎯 Visão Geral
 
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [API Endpoints](#api-endpoints)
-- [Database](#database)
+CRUD completo de Usuários, Imobiliárias, Clientes, Imóveis e Negociações.
 
-## Installation
+Autenticação e autorização via Spring Security (roles ADMIN e USER).
 
-1. Clone the repository:
+Integração com API ViaCEP para preenchimento automático de endereços.
 
-```bash
-git clone https://github.com/Fernanda-Kipper/live-crud-java-spring.git
-```
+Envio de e‑mails (recuperação de senha) via JavaMailSender.
 
-2. Install dependencies with Maven
+Dashboard com indicadores e gráficos (Chart.js).
 
-## Usage
+Isolamento user‑tenant: cada usuário acessa apenas seus próprios dados.
 
-1. Start the application with Maven
-2. The API will be accessible at http://localhost:8080
+🛠️ Tech Stack
+
+Linguagens: Java 17, HTML5, CSS3, JavaScript
+
+Backend:
+
+Spring Boot (MVC, Data JPA, Security, Validation, Mail, WebFlux)
+
+Hibernate (JPA)
+
+Spring Data JPA
+
+Lombok
+
+Maven
+
+Frontend:
+
+Thymeleaf
+
+Bootstrap 5 + Bootstrap Icons
+
+Animate.css
+
+Chart.js
+
+Banco de Dados: PostgreSQL
+
+Migrações: Flyway
+
+Testes: JUnit 5, Mockito, Spring Boot Starter Test
+
+Controle de Versão: Git (Git Flow simplificado)
+
+🚀 Pré-requisitos
+
+Java 17+
+
+Maven 3.6+
+
+PostgreSQL 12+
+
+Conta Gmail ou SMTP configurado para envio de e‑mail (opcional)
+
+📦 Estrutura do Projeto
+
+├── src
+│   ├── main
+│   │   ├── java/com/example/crud
+│   │   │   ├── config         # Configurações Spring Boot e Security
+│   │   │   ├── controllers    # Controllers MVC e REST
+│   │   │   ├── services       # Lógica de negócio
+│   │   │   ├── repositories   # Spring Data JPA
+│   │   │   ├── domain         # Entidades JPA
+│   │   │   ├── requests       # DTOs de requisição
+│   │   │   └── integration    # Integrações externas (ViaCEP)
+│   │   └── resources
+│   │       ├── db/migration   # Scripts Flyway
+│   │       ├── static         # CSS, imagens, JS
+│   │       └── templates      # Thymeleaf templates
+│   └── test                   # Testes unitários e de integração
+└── pom.xml
+
+🔒 Segurança
+
+Senhas criptografadas com BCryptPasswordEncoder.
+
+Autenticação via formulário customizado /login.
+
+CSRF habilitado.
+
+Roles: ROLE_ADMIN e ROLE_USER.
+
+Isolamento de dados por usuário (user-tenant).
+
+🔗 Integração ViaCEP
+
+Serviço WebClient base URL: https://viacep.com.br/ws.
+
+Endpoint interno: GET /api/cep/{cep} retorna JSON de endereço.
+
+DTO: ViaCepResponse mapeia campos da API.
+
+📈 Versionamento
+
+Git Flow simplificado:
+
+main: produção
+
+develop: integração de features
+
+feature/*: novas funcionalidades
+
+bugfix/*: correções
 
 
-## API Endpoints
-The API provides the following endpoints:
 
-```markdown
-GET / - Retrieve a list of all data.
 
-POST / - Register a new data.
-
-PUT / - Alter data.
-
-DELETE / - Delete data.
-```
-
-## Database
-The project utilizes PostgresSQL as the database. The necessary database migrations are managed using Flyway.
-
-To [install PostgresSQL])(https://www.postgresql.org/download/) you can install here.
