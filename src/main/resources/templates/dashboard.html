@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">ImobiFlow</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+<th:block th:replace="~{fragments/layout :: header}"/>
+
+<div class="container mt-4">
+    <h1 class="mb-4">Bem-vindo</h1>
+    <p>Aqui você poderá visualizar os insights de negociações</p>
+
+    <!-- Botões de Ação Rápida -->
+    <div class="row mb-4">
+        <div class="col d-flex gap-2">
+            <a class="btn btn-primary flex-fill" th:href="@{/imovel/pagina}">
+                <i class="bi bi-house-door-fill me-2"></i>Cadastrar Imóvel
+            </a>
+            <a class="btn btn-primary flex-fill" th:href="@{/negociacao/pagina}">
+                <i class="bi bi-currency-dollar me-2"></i>Cadastrar Negociação
+            </a>
+            <a class="btn btn-primary flex-fill" th:href="@{/imobiliarias}">
+                <i class="bi bi-building me-2"></i>Cadastrar Imobiliária
+            </a>
+            <a class="btn btn-primary flex-fill" th:href="@{/clientes}">
+                <i class="bi bi-person-plus me-2"></i>Cadastrar Cliente
+            </a>
+        </div>
+    </div>
+
+    <!-- Cards de Métricas -->
+    <div class="row mb-4 row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+
+        <!-- Total de Negociações -->
+        <div class="col d-flex">
+            <div class="card text-center shadow-sm card-dashboard flex-fill h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Total de Negociações</h5>
+                    <p class="display-6" th:text="${totalNegociacoes}">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de Clientes -->
+        <div class="col d-flex">
+            <div class="card text-center shadow-sm card-dashboard flex-fill h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Total de Clientes</h5>
+                    <p class="display-6" th:text="${totalClientes}">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Última Negociação -->
+        <div class="col d-flex">
+            <div class="card shadow-sm card-dashboard flex-fill h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <h5 class="card-title">Última Negociação</h5>
+                    <div th:if="${ultimaNegociacao != null}">
+                        <p class="mb-1 fw-bold" th:text="${ultimaNegociacao.cliente.nome}">Cliente</p>
+                        <p class="mb-1" th:text="'Imob: ' + ${ultimaNegociacao.imobiliaria.nome}">Imobiliária</p>
+                        <p class="mb-1" th:text="'Valor: R$ ' + ${#numbers.formatDecimal(ultimaNegociacao.valorProposto, 2, 2)}">
+                            R$ 0,00
+                        </p>
+                    </div>
+                    <div th:if="${ultimaNegociacao == null}">
+                        <p class="text-muted">Nenhuma negociação registrada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imobiliária com Mais Clientes -->
+        <div class="col d-flex">
+            <div class="card shadow-sm card-dashboard flex-fill h-100">
+                <div class="card-body d-flex flex-column justify-content-between text-center">
+                    <i class="bi bi-buildings-fill fs-2 text-dark"></i>
+                    <h6 class="mt-2">Imobiliária com Mais Clientes</h6>
+                    <p class="fw-bold mb-0"
+                       th:text="${imobiliariaMaisClientes != null ? imobiliariaMaisClientes : 'Nenhuma'}">
+                        Nenhuma
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Gráfico de Pizza de Status -->
+    <div class="row">
+        <!-- Coluna do Gráfico (pie) -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Negociações por Status</h5>
+                    <div class="chart-container" style="height:300px;">
+                        <canvas id="graficoNegociacoes"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 5 Clientes à direita -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Top 5 Clientes</h5>
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item d-flex justify-content-between align-items-start"
+                            th:each="cli : ${topClientes}">
+                            <div class="ms-2 me-auto" th:text="${cli.nome}">Cliente X</div>
+                            <span class="badge bg-primary rounded-pill"
+                                  th:text="${cli.total}">0</span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script dos Gráficos -->
+<script th:inline="javascript">
+    const negociacoesPorStatus = /*[[${negociacoesPorStatus}]]*/ {};
+    const labelsNeg = Object.keys(negociacoesPorStatus);
+    const dataNeg   = Object.values(negociacoesPorStatus);
+
+    if (labelsNeg.length) {
+        new Chart(document.getElementById('graficoNegociacoes'), {
+            type: 'pie',
+            data: {
+                labels: labelsNeg,
+                datasets: [{ data: dataNeg, backgroundColor: ['#007bff','#28a745','#ffc107','#dc3545','#6c757d','#fd7e14','#20c997','#6610f2'] }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:if="${mostrarWizard}">
+    window.addEventListener('DOMContentLoaded', function () {
+        iniciarWizard();
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function iniciarWizard() {
+        const passos = [
+            {
+                title: '👋 Bem-vindo ao ImobiFlow!',
+                html: 'Vamos configurar seu ambiente para começar a usar o sistema de forma completa.',
+                icon: 'info',
+                confirmButtonText: 'Começar'
+            },
+            {
+                title: '🏢 Cadastre uma Imobiliária',
+                html: `
+                    <p>Para associar imóveis e negociações, você precisa cadastrar ao menos uma imobiliária.</p>
+                    <small>Menu: <strong>Imobiliárias</strong> &gt; Cadastrar</small>
+                `,
+                icon: 'warning',
+                confirmButtonText: 'Próximo'
+            },
+            {
+                title: '🧑‍💼 Cadastre um Cliente',
+                html: `
+                    <p>Após o cadastro da imobiliária, vamos prosseguir para o cadastro do cliente,
+                    sendo possível vinculá-lo a uma imobiliária!</p>
+                    <small>Menu: <strong>Clientes</strong> &gt; Cadastrar</small>
+                `,
+                icon: 'warning',
+                confirmButtonText: 'Próximo'
+            },
+            {
+                title: '🏠 Cadastre um Imóvel',
+                html: `
+                    <p>Em seguida, registre os imóveis disponíveis e associe-os a uma imobiliária.</p>
+                    <small>Menu: <strong>Imóveis</strong> &gt; Cadastrar</small>
+                `,
+                icon: 'warning',
+                confirmButtonText: 'Próximo'
+            },
+            {
+                title: '📑 Cadastre uma Negociação',
+                html: `
+                    <p>Agora que você tem cliente, imóvel e imobiliária, pode iniciar o cadastro de uma negociação no Sistema!</p>
+                    <small>Menu: <strong>Negociações</strong> &gt; Cadastrar</small>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Finalizar'
+            },
+            {
+                title: '✅ Tudo pronto!',
+                html: 'Aproveite os recursos do ImobiFlow. Boas vendas!',
+                icon: 'success',
+                confirmButtonText: 'Ir para o painel'
+            }
+        ];
+
+        let index = 0;
+        const proximoPasso = () => {
+            if (index >= passos.length) return;
+            const passo = passos[index];
+            Swal.fire({
+                title: passo.title,
+                html: passo.html,
+                icon: passo.icon,
+                confirmButtonText: passo.confirmButtonText,
+                allowOutsideClick: false
+            }).then(() => {
+                index++;
+                proximoPasso();
+            });
+        };
+
+        proximoPasso();
+    }
+</script>
+
+<th:block th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

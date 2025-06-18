@@ -1,0 +1,8 @@
+ALTER TABLE imobiliaria
+  ADD COLUMN cep VARCHAR(9);
+
+ALTER TABLE cliente
+  ADD COLUMN cep VARCHAR(9);
+
+ALTER TABLE imovel
+  ADD COLUMN cep VARCHAR(9);

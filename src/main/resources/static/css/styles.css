@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+.custom-header {
+    background-color: #1a1a40;
+    color: white;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    margin-bottom: 30px;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+}
+
+.logo-header {
+    width: 80px; /* aumente conforme desejar */
+    height: auto;
+}
+
+.navbar, .navbar-nav, .nav-link, .navbar-brand {
+  font-family: "Share Tech", sans-serif;
+}
+
+.navbar {
+  background-color: #1a1a40 !important; /* ou qualquer outra cor desejada */
+}
+
+.navbar-brand, .nav-link {
+  color: white !important;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+  color: #ccc !important;
+}
+
+body {
+    padding-top: 0;
+    background-color: #f8f9fa;
+    font-family: "Share Tech", sans-serif;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, span, a, .card, .card-title, .display-6, .navbar, .nav-link, .navbar-brand {
+    font-family: 'Share Tech', sans-serif !important;
+}

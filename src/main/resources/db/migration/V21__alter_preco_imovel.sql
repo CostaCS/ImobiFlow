@@ -1,0 +1,3 @@
+ALTER TABLE imovel
+  ALTER COLUMN preco TYPE DECIMAL(15,2),
+  ALTER COLUMN preco_condominio TYPE DECIMAL(15,2);
